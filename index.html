@@ -1,329 +1,788 @@
-// File: OneKitHome.jsx
-import React, { useState, useMemo } from "react";
-import { Search, Mail, ArrowRight, Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Wonder - Your Daily Tools, All in One Place</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e40af;
+            --light-blue: #dbeafe;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --gray-bg: #f9fafb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
 
-export default function OneKitHome() {
-  const [search, setSearch] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  const categories = [
-    {
-      title: "🖼 Image Tools",
-      desc: "Convert, compress, resize, and extract text from your images.",
-      tools: [
-        "Image Converter",
-        "Image Compressor",
-        "Image Resizer",
-        "Image Cropper",
-        "Image to Text (OCR)",
-        "Image Rotator/Flipper",
-      ],
-    },
-    {
-      title: "📄 Document Tools",
-      desc: "Handle PDFs and documents with ease and security.",
-      tools: [
-        "PDF to Word / Word to PDF",
-        "PDF Compressor",
-        "PDF Merger & Splitter",
-        "Document Converter",
-        "PDF Lock/Unlock",
-        "eSign PDF",
-      ],
-    },
-    {
-      title: "🧮 Calculator Tools",
-      desc: "Smart calculators for everyday use.",
-      tools: [
-        "Scientific Calculator",
-        "Age Calculator",
-        "BMI Calculator",
-        "Loan EMI Calculator",
-        "GST Calculator",
-        "Currency Converter",
-      ],
-    },
-    {
-      title: "🔤 Text Tools",
-      desc: "Simplify and transform your text instantly.",
-      tools: [
-        "Text Case Converter",
-        "Word & Character Counter",
-        "Remove Duplicate Lines",
-        "Text Sorter",
-        "Text Reverser",
-        "Text Encryptor/Decryptor",
-      ],
-    },
-    {
-      title: "🌐 Web/Developer Tools",
-      desc: "Perfect helpers for developers and web creators.",
-      tools: [
-        "HTML/CSS/JS Minifier",
-        "JSON Formatter & Validator",
-        "Base64 Encoder/Decoder",
-        "URL Encoder/Decoder",
-        "Color Picker & Converter",
-        "Regex Tester",
-      ],
-    },
-    {
-      title: "🎨 Color Tools",
-      desc: "Explore and create stunning color palettes.",
-      tools: [
-        "Color Picker from Image",
-        "HEX to RGB Converter",
-        "Gradient Generator",
-        "Contrast Checker",
-        "Palette Generator",
-        "Color Blindness Simulator",
-      ],
-    },
-    {
-      title: "🌍 SEO & Marketing Tools",
-      desc: "Optimize and analyze your online content.",
-      tools: [
-        "Keyword Density Checker",
-        "Meta Tag Analyzer",
-        "Word Counter",
-      ],
-    },
-    {
-      title: "🛠️ Utility Tools",
-      desc: "Everyday utilities for quick and smart work.",
-      tools: [
-        "QR Code Generator & Scanner",
-        "Barcode Generator",
-        "UUID Generator",
-        "Unit Converter",
-        "Time Zone Converter",
-        "Random Number/Password Generator",
-      ],
-    },
-  ];
+        body {
+            color: var(--text-dark);
+            background-color: var(--white);
+            line-height: 1.6;
+        }
 
-  // Filter categories based on search
-  const filteredCategories = useMemo(() => {
-    if (!search.trim()) return categories;
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    return categories
-      .map(category => ({
-        ...category,
-        tools: category.tools.filter(tool =>
-          tool.toLowerCase().includes(search.toLowerCase())
-        )
-      }))
-      .filter(category => category.tools.length > 0);
-  }, [search, categories]);
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-  const handleToolClick = (toolName) => {
-    // In a real app, this would navigate to the specific tool
-    console.log(`Opening tool: ${toolName}`);
-    alert(`Opening: ${toolName}\n\nIn a real application, this would navigate to the specific tool page.`);
-  };
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setMobileMenuOpen(false);
-  };
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
 
-  return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white text-gray-800">
-      {/* HEADER */}
-      <header className="flex justify-between items-center px-6 py-4 shadow bg-white sticky top-0 z-50">
-        <h1 className="text-2xl font-bold text-blue-600">OneKit</h1>
-        
-        {/* Desktop Navigation */}
-        <nav className="space-x-6 hidden md:flex">
-          <button 
-            onClick={() => scrollToSection('hero')}
-            className="hover:text-blue-600 transition-colors"
-          >
-            Home
-          </button>
-          <button 
-            onClick={() => scrollToSection('tools')}
-            className="hover:text-blue-600 transition-colors"
-          >
-            Tools
-          </button>
-          <a 
-            href="mailto:onekit69@gmail.com" 
-            className="hover:text-blue-600 flex items-center gap-1 transition-colors"
-          >
-            <Mail size={16}/> Contact
-          </a>
-        </nav>
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
 
-        {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden p-2"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </header>
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-      {/* Mobile Navigation Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white shadow-lg absolute top-16 left-0 right-0 z-40 overflow-hidden"
-          >
-            <div className="px-6 py-4 space-y-4">
-              <button 
-                onClick={() => scrollToSection('hero')}
-                className="block w-full text-left py-2 hover:text-blue-600 transition-colors"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => scrollToSection('tools')}
-                className="block w-full text-left py-2 hover:text-blue-600 transition-colors"
-              >
-                Tools
-              </button>
-              <a 
-                href="mailto:onekit69@gmail.com" 
-                className="flex items-center gap-2 py-2 hover:text-blue-600 transition-colors"
-              >
-                <Mail size={16}/> Contact
-              </a>
+        nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        .contact-email {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .contact-email i {
+            color: var(--primary-blue);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--white);
+            color: var(--primary-blue);
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tool-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .tool-icon {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 40px 0;
+            background-color: var(--gray-bg);
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 1px solid #e5e7eb;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Tools Section */
+        .tools-section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .tool-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tool-icon-small {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+
+        .tool-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .tool-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .tool-button {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .tool-button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+
+        .footer-tagline {
+            color: #9ca3af;
+            max-width: 300px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #9ca3af;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 15px 0;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .tool-icons {
+                gap: 20px;
+            }
+
+            .tool-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">OneKit</a>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Tools</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="contact-email">
+                    <i class="fas fa-envelope"></i>
+                    <span>onekit69@gmail.com</span>
+                </div>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-
-      {/* HERO SECTION */}
-      <section id="hero" className="text-center py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-        <motion.h2 
-          className="text-4xl md:text-5xl font-extrabold mb-4"
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          Your Daily Tools, All in One Place
-        </motion.h2>
-        <motion.p 
-          className="text-lg mb-6 opacity-90 max-w-2xl mx-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
-          Convert, calculate, compress, and simplify your everyday tasks — fast and free.
-        </motion.p>
-        <motion.button 
-          onClick={() => scrollToSection('tools')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full shadow hover:bg-blue-100 transition"
-        >
-          Explore Tools
-        </motion.button>
-      </section>
-
-      {/* SEARCH BAR */}
-      <div className="flex justify-center mt-10 px-4">
-        <div className="relative w-full max-w-xl">
-          <input
-            type="text"
-            placeholder="Search a tool..."
-            className="w-full p-4 pl-12 border border-blue-200 rounded-full shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Search className="absolute left-4 top-4 text-gray-400" />
         </div>
-      </div>
+    </header>
 
-      {/* TOOL SECTIONS */}
-      <main id="tools" className="px-6 py-16 space-y-16">
-        {filteredCategories.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No tools found matching your search.</p>
-            <button 
-              onClick={() => setSearch("")}
-              className="mt-4 text-blue-600 hover:text-blue-800 underline"
-            >
-              Clear search
-            </button>
-          </div>
-        ) : (
-          filteredCategories.map((cat, i) => (
-            <motion.section 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <h3 className="text-2xl font-bold text-blue-700 mb-2">{cat.title}</h3>
-              <p className="text-gray-600 mb-6">{cat.desc}</p>
-              <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {cat.tools.map((tool, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-white rounded-2xl shadow hover:shadow-lg p-5 transition-all border border-blue-100 flex flex-col justify-between cursor-pointer"
-                    onClick={() => handleToolClick(tool)}
-                  >
-                    <div>
-                      <h4 className="font-semibold text-blue-700 mb-1">{tool}</h4>
-                      <p className="text-sm text-gray-500 mb-4">Quick and easy to use.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Your Daily Tools, All in One Place</h1>
+                <p>Convert, calculate, compress, and simplify your everyday tasks — fast and free.</p>
+                <a href="#" class="cta-button">Explore Tools</a>
+                
+                <div class="tool-icons">
+                    <div class="tool-icon">
+                        <i class="fas fa-image"></i>
                     </div>
-                    <div className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                      Use Tool <ArrowRight size={14} />
+                    <div class="tool-icon">
+                        <i class="fas fa-file-alt"></i>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
-          ))
-        )}
-      </main>
-
-      {/* FOOTER */}
-      <footer className="bg-blue-700 text-white py-10 mt-10">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center md:text-left">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">OneKit</h2>
-            <p className="text-sm opacity-80">Simplifying your digital life.</p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">Quick Links</h3>
-            <ul className="space-y-1 text-sm opacity-90">
-              <li>
-                <button 
-                  onClick={() => alert('Privacy Policy would be shown here')}
-                  className="hover:underline"
-                >
-                  Privacy Policy
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => alert('Terms of Use would be shown here')}
-                  className="hover:underline"
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">Contact</h3>
-            <p className="text-sm opacity-90">onekit69@gmail.com</p>
-          </div>
+                    <div class="tool-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="tool-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p className="text-center text-xs opacity-70 mt-8">
-          © {new Date().getFullYear()} OneKit. All rights reserved.
-        </p>
-      </footer>
-    </div>
-  );
-}
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search a tool...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Sections -->
+    <main class="container">
+        <!-- Image Tools -->
+        <section class="tools-section">
+            <div class="section-header">
+                <h2>🖼 Image Tools</h2>
+                <p>Edit, convert, and optimize your images with our powerful tools</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Image Converter</h3>
+                    <p>Convert images between different formats like JPG, PNG, WEBP, and more</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </div>
+                    <h3>Image Compressor</h3>
+                    <p>Reduce image file size without noticeable quality loss</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-expand-alt"></i>
+                    </div>
+                    <h3>Image Resizer</h3>
+                    <p>Resize images to specific dimensions while maintaining aspect ratio</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-crop-alt"></i>
+                    </div>
+                    <h3>Image Cropper</h3>
+                    <p>Crop images to remove unwanted areas or focus on specific parts</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <h3>Image to Text (OCR)</h3>
+                    <p>Extract text from images using advanced OCR technology</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Image Rotator/Flipper</h3>
+                    <p>Rotate or flip images horizontally or vertically</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Document Tools -->
+        <section class="tools-section">
+            <div class="section-header">
+                <h2>📄 Document Tools</h2>
+                <p>Manage and convert your documents with ease</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>PDF to Word / Word to PDF</h3>
+                    <p>Convert between PDF and Word documents seamlessly</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-file-archive"></i>
+                    </div>
+                    <h3>PDF Compressor</h3>
+                    <p>Reduce PDF file size while maintaining quality</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-object-group"></i>
+                    </div>
+                    <h3>PDF Merger & Splitter</h3>
+                    <p>Combine multiple PDFs or split large PDFs into smaller ones</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Document Converter</h3>
+                    <p>Convert between various document formats</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>PDF Lock/Unlock</h3>
+                    <p>Add or remove password protection from PDF files</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-signature"></i>
+                    </div>
+                    <h3>eSign PDF</h3>
+                    <p>Add electronic signatures to your PDF documents</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Calculator Tools -->
+        <section class="tools-section">
+            <div class="section-header">
+                <h2>🧮 Calculator Tools</h2>
+                <p>Perform various calculations for daily needs</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Scientific Calculator</h3>
+                    <p>Advanced calculator with scientific functions</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <h3>Age Calculator</h3>
+                    <p>Calculate age in years, months, and days</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <h3>BMI Calculator</h3>
+                    <p>Calculate Body Mass Index based on height and weight</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3>Loan EMI Calculator</h3>
+                    <p>Calculate Equated Monthly Installments for loans</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h3>GST Calculator</h3>
+                    <p>Calculate Goods and Services Tax amounts</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>Currency Converter</h3>
+                    <p>Convert between different world currencies</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Text Tools -->
+        <section class="tools-section">
+            <div class="section-header">
+                <h2>🔤 Text Tools</h2>
+                <p>Manipulate and analyze text with our text utilities</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-text-height"></i>
+                    </div>
+                    <h3>Text Case Converter</h3>
+                    <p>Convert text between uppercase, lowercase, and title case</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-sort-amount-down"></i>
+                    </div>
+                    <h3>Word & Character Counter</h3>
+                    <p>Count words, characters, sentences, and paragraphs</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-backspace"></i>
+                    </div>
+                    <h3>Remove Duplicate Lines</h3>
+                    <p>Remove duplicate lines from text</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-sort-alpha-down"></i>
+                    </div>
+                    <h3>Text Sorter</h3>
+                    <p>Sort lines of text alphabetically or numerically</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-retweet"></i>
+                    </div>
+                    <h3>Text Reverser</h3>
+                    <p>Reverse text character by character or word by word</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Text Encryptor/Decryptor</h3>
+                    <p>Encrypt and decrypt text with secure algorithms</p>
+                    <a href="#" class="tool-button">Use Tool</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Additional sections would follow the same pattern -->
+        
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">OneKit</div>
+                    <p class="footer-tagline">Simplifying your digital life.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Home</a>
+                    <a href="#">Tools</a>
+                    <a href="#">Contact</a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                </div>
+                
+                <div class="footer-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>onekit69@gmail.com</span>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Tools Wonder. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const toolCards = document.querySelectorAll('.tool-card');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                toolCards.forEach(card => {
+                    const toolName = card.querySelector('h3').textContent.toLowerCase();
+                    const toolDesc = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Mobile menu toggle (placeholder functionality)
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            mobileMenuBtn.addEventListener('click', function() {
+                alert('Mobile menu would open here in a complete implementation');
+            });
+        });
+    </script>
+</body>
+</html>
