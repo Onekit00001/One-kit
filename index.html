@@ -6,6 +6,7 @@
     <title>Tools Wonder - Your Daily Tools, All in One Place</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* All your existing CSS remains the same */
         :root {
             --primary-blue: #2563eb;
             --dark-blue: #1e40af;
@@ -268,6 +269,7 @@
             transition: background-color 0.3s;
             text-align: center;
             text-decoration: none;
+            display: inline-block;
         }
 
         .tool-button:hover {
@@ -397,6 +399,11 @@
                 padding: 20px;
             }
         }
+
+        /* Hide sections when no results */
+        .tools-section.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -465,7 +472,7 @@
     <!-- Tools Sections -->
     <main class="container">
         <!-- Image Tools -->
-        <section class="tools-section">
+        <section class="tools-section" data-category="image">
             <div class="section-header">
                 <h2>🖼 Image Tools</h2>
                 <p>Edit, convert, and optimize your images with our powerful tools</p>
@@ -478,7 +485,7 @@
                     </div>
                     <h3>Image Converter</h3>
                     <p>Convert images between different formats like JPG, PNG, WEBP, and more</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -487,7 +494,7 @@
                     </div>
                     <h3>Image Compressor</h3>
                     <p>Reduce image file size without noticeable quality loss</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -496,7 +503,7 @@
                     </div>
                     <h3>Image Resizer</h3>
                     <p>Resize images to specific dimensions while maintaining aspect ratio</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -505,7 +512,7 @@
                     </div>
                     <h3>Image Cropper</h3>
                     <p>Crop images to remove unwanted areas or focus on specific parts</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -514,7 +521,7 @@
                     </div>
                     <h3>Image to Text (OCR)</h3>
                     <p>Extract text from images using advanced OCR technology</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -523,13 +530,13 @@
                     </div>
                     <h3>Image Rotator/Flipper</h3>
                     <p>Rotate or flip images horizontally or vertically</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </section>
         
         <!-- Document Tools -->
-        <section class="tools-section">
+        <section class="tools-section" data-category="document">
             <div class="section-header">
                 <h2>📄 Document Tools</h2>
                 <p>Manage and convert your documents with ease</p>
@@ -542,7 +549,7 @@
                     </div>
                     <h3>PDF to Word / Word to PDF</h3>
                     <p>Convert between PDF and Word documents seamlessly</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -551,7 +558,7 @@
                     </div>
                     <h3>PDF Compressor</h3>
                     <p>Reduce PDF file size while maintaining quality</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -560,7 +567,7 @@
                     </div>
                     <h3>PDF Merger & Splitter</h3>
                     <p>Combine multiple PDFs or split large PDFs into smaller ones</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -569,7 +576,7 @@
                     </div>
                     <h3>Document Converter</h3>
                     <p>Convert between various document formats</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -578,7 +585,7 @@
                     </div>
                     <h3>PDF Lock/Unlock</h3>
                     <p>Add or remove password protection from PDF files</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -587,13 +594,13 @@
                     </div>
                     <h3>eSign PDF</h3>
                     <p>Add electronic signatures to your PDF documents</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </section>
         
         <!-- Calculator Tools -->
-        <section class="tools-section">
+        <section class="tools-section" data-category="calculator">
             <div class="section-header">
                 <h2>🧮 Calculator Tools</h2>
                 <p>Perform various calculations for daily needs</p>
@@ -606,7 +613,7 @@
                     </div>
                     <h3>Scientific Calculator</h3>
                     <p>Advanced calculator with scientific functions</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -615,7 +622,7 @@
                     </div>
                     <h3>Age Calculator</h3>
                     <p>Calculate age in years, months, and days</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -624,7 +631,7 @@
                     </div>
                     <h3>BMI Calculator</h3>
                     <p>Calculate Body Mass Index based on height and weight</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -633,7 +640,7 @@
                     </div>
                     <h3>Loan EMI Calculator</h3>
                     <p>Calculate Equated Monthly Installments for loans</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -642,7 +649,7 @@
                     </div>
                     <h3>GST Calculator</h3>
                     <p>Calculate Goods and Services Tax amounts</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -651,13 +658,13 @@
                     </div>
                     <h3>Currency Converter</h3>
                     <p>Convert between different world currencies</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </section>
         
         <!-- Text Tools -->
-        <section class="tools-section">
+        <section class="tools-section" data-category="text">
             <div class="section-header">
                 <h2>🔤 Text Tools</h2>
                 <p>Manipulate and analyze text with our text utilities</p>
@@ -670,7 +677,7 @@
                     </div>
                     <h3>Text Case Converter</h3>
                     <p>Convert text between uppercase, lowercase, and title case</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -679,7 +686,7 @@
                     </div>
                     <h3>Word & Character Counter</h3>
                     <p>Count words, characters, sentences, and paragraphs</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -688,7 +695,7 @@
                     </div>
                     <h3>Remove Duplicate Lines</h3>
                     <p>Remove duplicate lines from text</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -697,7 +704,7 @@
                     </div>
                     <h3>Text Sorter</h3>
                     <p>Sort lines of text alphabetically or numerically</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -706,7 +713,7 @@
                     </div>
                     <h3>Text Reverser</h3>
                     <p>Reverse text character by character or word by word</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
                 
                 <div class="tool-card">
@@ -715,12 +722,38 @@
                     </div>
                     <h3>Text Encryptor/Decryptor</h3>
                     <p>Encrypt and decrypt text with secure algorithms</p>
-                    <a href="#" class="tool-button">Use Tool</a>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
                 </div>
             </div>
         </section>
         
-        <!-- Additional sections would follow the same pattern -->
+        <!-- Web/Developer Tools -->
+        <section class="tools-section" data-category="web">
+            <div class="section-header">
+                <h2>🌐 Web/Developer Tools</h2>
+                <p>Tools for developers and web professionals</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>HTML/CSS/JS Minifier</h3>
+                    <p>Minify and compress your code files</p>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon-small">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h3>JSON Formatter & Validator</h3>
+                    <p>Format and validate JSON data</p>
+                    <a href="javascript:void(0)" class="tool-button">Use Tool</a>
+                </div>
+            </div>
+        </section>
         
     </main>
 
@@ -757,30 +790,72 @@
     </footer>
 
     <script>
-        // Simple search functionality
+        // Fixed search functionality
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.querySelector('.search-input');
             const toolCards = document.querySelectorAll('.tool-card');
+            const toolSections = document.querySelectorAll('.tools-section');
             
             searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
+                const searchTerm = this.value.toLowerCase().trim();
                 
+                let hasVisibleResults = false;
+                
+                // Search through all tool cards
                 toolCards.forEach(card => {
                     const toolName = card.querySelector('h3').textContent.toLowerCase();
                     const toolDesc = card.querySelector('p').textContent.toLowerCase();
                     
                     if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm)) {
                         card.style.display = 'flex';
+                        hasVisibleResults = true;
                     } else {
                         card.style.display = 'none';
                     }
                 });
+                
+                // Show/hide entire sections based on whether they have visible tools
+                toolSections.forEach(section => {
+                    const sectionCards = section.querySelectorAll('.tool-card');
+                    const hasVisibleCards = Array.from(sectionCards).some(card => 
+                        card.style.display !== 'none'
+                    );
+                    
+                    if (hasVisibleCards || searchTerm === '') {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
             });
             
-            // Mobile menu toggle (placeholder functionality)
+            // Mobile menu toggle
             const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const nav = document.querySelector('nav');
+            
             mobileMenuBtn.addEventListener('click', function() {
-                alert('Mobile menu would open here in a complete implementation');
+                if (nav.style.display === 'flex') {
+                    nav.style.display = 'none';
+                } else {
+                    nav.style.display = 'flex';
+                    nav.style.flexDirection = 'column';
+                    nav.style.position = 'absolute';
+                    nav.style.top = '100%';
+                    nav.style.left = '0';
+                    nav.style.right = '0';
+                    nav.style.backgroundColor = 'var(--white)';
+                    nav.style.padding = '20px';
+                    nav.style.boxShadow = 'var(--shadow)';
+                }
+            });
+            
+            // Fix tool buttons to prevent scrolling
+            document.querySelectorAll('.tool-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // In future, this will navigate to the actual tool
+                    alert('This tool will be available soon!');
+                });
             });
         });
     </script>
