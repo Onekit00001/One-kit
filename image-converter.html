@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi Tool Hub</title>
+    <title>Image Converter Tool</title>
     <style>
         * {
             margin: 0;
@@ -16,122 +16,100 @@
             background: #1E1E2F;
             color: #EAEAEA;
             text-align: center;
-        }
-
-        .header {
-            background: #2B2D42;
             padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #FFD700;
         }
 
         .container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 900px;
-            margin: 40px auto;
-        }
-
-        .tool-card {
-            background: #3A3D5B;
+            max-width: 600px;
+            margin: auto;
+            background: #2B2D42;
             padding: 20px;
             border-radius: 10px;
-            text-align: center;
-            transition: 0.3s;
             box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
         }
 
-        .tool-card:hover {
-            background: #FFD700;
-            color: #1E1E2F;
-        }
-
-        .tool-card h2 {
-            margin-bottom: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: #FFD700;
-            color: #1E1E2F;
-            border: none;
+        input, select, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
             border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
+            border: none;
         }
 
-        .btn:hover {
+        button {
+            background: #FFD700;
+            color: #1E1E2F;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
             background: #E6C200;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+        .preview {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="header">Multi Tool Hub</div>
-    
     <div class="container">
-        <div class="tool-card">
-            <h2>Image Converter</h2>
-            <p>Convert images to different formats easily.</p>
-            <button class="btn" onclick="goToSection('image-converter')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>Image Compressor</h2>
-            <p>Compress images without losing quality.</p>
-            <button class="btn" onclick="goToSection('image-compressor')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>Image Crop</h2>
-            <p>Crop images to the desired size and dimensions.</p>
-            <button class="btn" onclick="goToSection('image-crop')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>Video Converter</h2>
-            <p>Convert videos to different formats quickly.</p>
-            <button class="btn" onclick="goToSection('video-converter')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>Age Calculator</h2>
-            <p>Find your exact age in years, months, and days.</p>
-            <button class="btn" onclick="goToSection('age-calculator')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>EMI Calculator</h2>
-            <p>Calculate your loan EMIs quickly.</p>
-            <button class="btn" onclick="goToSection('emi-calculator')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>SIP Calculator</h2>
-            <p>Calculate your SIP returns effortlessly.</p>
-            <button class="btn" onclick="goToSection('sip-calculator')">Go to Tool</button>
-        </div>
-
-        <div class="tool-card">
-            <h2>Audio Trim</h2>
-            <p>Trim audio files to your required length.</p>
-            <button class="btn" onclick="goToSection('audio-trim')">Go to Tool</button>
-        </div>
+        <h2>Image Converter</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <select id="formatSelect">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="webp">WEBP</option>
+        </select>
+        <button onclick="convertImage()">Convert Image</button>
+        <p id="status"></p>
+        <div class="preview" id="previewContainer"></div>
     </div>
 
     <script>
-        function goToSection(sectionId) {
-            alert('Redirecting to ' + sectionId + ' (Page under development)');
-            // Replace with actual navigation logic when the pages are ready
+        function convertImage() {
+            const fileInput = document.getElementById('imageInput');
+            const format = document.getElementById('formatSelect').value;
+            const status = document.getElementById('status');
+            const previewContainer = document.getElementById('previewContainer');
+
+            if (!fileInput.files.length) {
+                alert('Please upload an image first.');
+                return;
+            }
+
+            status.textContent = 'Processing image...';
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const convertedImage = canvas.toDataURL(`image/${format}`);
+                    previewContainer.innerHTML = `<img src="${convertedImage}" style="max-width: 100%; border-radius: 5px; margin-top: 10px;">`;
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = convertedImage;
+                    downloadBtn.download = `converted_image.${format}`;
+                    downloadBtn.textContent = 'Download Image';
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.style.background = '#FFD700';
+                    downloadBtn.style.color = '#1E1E2F';
+                    downloadBtn.style.padding = '10px';
+                    downloadBtn.style.marginTop = '10px';
+                    downloadBtn.style.textDecoration = 'none';
+                    downloadBtn.style.borderRadius = '5px';
+                    previewContainer.appendChild(downloadBtn);
+                    status.textContent = '';
+                };
+            };
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
