@@ -102,6 +102,8 @@
     <h2>🖼️ Image Resizer Tool</h2>
 
     <input type="file" id="imageInput" accept="image/*" />
+    <p style="font-size: 0.9em; color: #aaa;">(or paste a cropped image directly below 👇)</p>
+    <textarea id="base64Input" placeholder="Paste cropped image data URL here (optional)" rows="3" style="width:100%;background:#3A3C54;color:#FFD700;border:none;border-radius:8px;padding:8px;resize:none;"></textarea>
 
     <div class="dimensions">
       <label>Width:</label>
@@ -122,6 +124,7 @@
       </select>
     </div>
 
+    <button onclick="loadBase64Image()">Load Cropped Image</button>
     <button onclick="resizeImage()">Resize Image</button>
 
     <div class="preview-section">
@@ -150,19 +153,33 @@
       uploadedFile = file;
       const reader = new FileReader();
       reader.onload = function(event) {
-        originalImage.onload = function() {
-          document.getElementById('originalPreview').src = event.target.result;
-          document.getElementById('resizeWidth').value = originalImage.width;
-          document.getElementById('resizeHeight').value = originalImage.height;
-        };
-        originalImage.src = event.target.result;
+        loadImage(event.target.result);
       };
       reader.readAsDataURL(file);
     });
 
+    function loadBase64Image() {
+      const dataUrl = document.getElementById('base64Input').value.trim();
+      if (!dataUrl.startsWith("data:image")) {
+        alert("Please paste a valid cropped image data URL (starting with data:image/...).");
+        return;
+      }
+      loadImage(dataUrl);
+    }
+
+    function loadImage(src) {
+      originalImage = new Image();
+      originalImage.onload = function() {
+        document.getElementById('originalPreview').src = src;
+        document.getElementById('resizeWidth').value = originalImage.width;
+        document.getElementById('resizeHeight').value = originalImage.height;
+      };
+      originalImage.src = src;
+    }
+
     function resizeImage() {
-      if (!uploadedFile || !originalImage.src) {
-        alert("Please upload an image first.");
+      if (!originalImage.src) {
+        alert("Please upload or paste an image first.");
         return;
       }
 
