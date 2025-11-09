@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools Wonder - Your Daily Tools, All in One Place</title>
+    <title>OneKit - Your Daily Tools, All in One Place</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -333,6 +333,73 @@
             padding: 25px;
         }
 
+        /* Tool Preview Styles */
+        .tool-preview {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .preview-header h3 {
+            color: var(--primary-blue);
+        }
+
+        .full-tool-link {
+            color: var(--secondary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .full-tool-link:hover {
+            text-decoration: underline;
+        }
+
+        .preview-content {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .preview-icon {
+            font-size: 3rem;
+            color: var(--secondary-blue);
+            margin-bottom: 10px;
+        }
+
+        .preview-message {
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .action-button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .action-button:hover {
+            background-color: var(--dark-blue);
+        }
+
         /* Footer */
         footer {
             background-color: var(--dark-blue);
@@ -554,7 +621,7 @@
                     <div class="tool-icon-small">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
-                    <h3>image-converter.html</h3>
+                    <h3>Image Converter</h3>
                     <p>Convert images between different formats like JPG, PNG, and more</p>
                     <button class="tool-button">Use Tool</button>
                 </div>
@@ -1042,7 +1109,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 Tools Wonder. All rights reserved.</p>
+                <p>&copy; 2023 OneKit. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -1092,26 +1159,24 @@
                     content = `
                         <h3>Convert Images Between Formats</h3>
                         <p>Upload your image and select the desired output format.</p>
-                        <div style="border: 2px dashed #d1d5db; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #3b82f6; margin-bottom: 15px;"></i>
-                            <p>Drag & drop your image here or click to browse</p>
-                            <input type="file" accept="image/*" style="margin-top: 15px;">
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>Image Converter Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the Image Converter tool. The full version allows you to convert between JPG, PNG, GIF, WebP, and more formats.</p>
+                                <div style="border: 2px dashed #d1d5db; padding: 20px; text-align: center; margin: 10px 0; border-radius: 8px; width: 100%;">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #3b82f6; margin-bottom: 10px;"></i>
+                                    <p>Drag & drop your image here or click to browse</p>
+                                    <input type="file" accept="image/*" style="margin-top: 10px;">
+                                </div>
+                                <button class="action-button">Convert Image</button>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="format" value="jpg" checked> JPG
-                            </label>
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="format" value="png"> PNG
-                            </label>
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="format" value="gif"> GIF
-                            </label>
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="format" value="webp"> WebP
-                            </label>
-                        </div>
-                        <button style="background-color: #1e40af; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; width: 100%;">Convert Image</button>
                     `;
                     break;
                     
@@ -1119,20 +1184,32 @@
                     content = `
                         <h3>Compress Your Images</h3>
                         <p>Reduce file size while maintaining quality.</p>
-                        <div style="border: 2px dashed #d1d5db; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #3b82f6; margin-bottom: 15px;"></i>
-                            <p>Drag & drop your image here or click to browse</p>
-                            <input type="file" accept="image/*" style="margin-top: 15px;">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label>Compression Level:</label>
-                            <input type="range" min="1" max="100" value="80" style="width: 100%; margin-top: 10px;">
-                            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                                <span>Low (Smaller file)</span>
-                                <span>High (Better quality)</span>
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>Image Compressor Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-compress-alt"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the Image Compressor tool. The full version allows you to reduce image file size without noticeable quality loss.</p>
+                                <div style="border: 2px dashed #d1d5db; padding: 20px; text-align: center; margin: 10px 0; border-radius: 8px; width: 100%;">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #3b82f6; margin-bottom: 10px;"></i>
+                                    <p>Drag & drop your image here or click to browse</p>
+                                    <input type="file" accept="image/*" style="margin-top: 10px;">
+                                </div>
+                                <div style="width: 100%; margin: 15px 0;">
+                                    <label>Compression Level:</label>
+                                    <input type="range" min="1" max="100" value="80" style="width: 100%; margin-top: 10px;">
+                                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                                        <span>Smaller file</span>
+                                        <span>Better quality</span>
+                                    </div>
+                                </div>
+                                <button class="action-button">Compress Image</button>
                             </div>
                         </div>
-                        <button style="background-color: #1e40af; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; width: 100%;">Compress Image</button>
                     `;
                     break;
                     
@@ -1140,38 +1217,37 @@
                     content = `
                         <h3>Scientific Calculator</h3>
                         <p>Perform advanced mathematical calculations.</p>
-                        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <input type="text" id="calcDisplay" readonly style="width: 100%; padding: 15px; font-size: 1.5rem; text-align: right; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 15px;">
-                            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
-                                <button class="calc-btn" data-value="sin">sin</button>
-                                <button class="calc-btn" data-value="cos">cos</button>
-                                <button class="calc-btn" data-value="tan">tan</button>
-                                <button class="calc-btn" data-value="log">log</button>
-                                <button class="calc-btn" data-value="ln">ln</button>
-                                <button class="calc-btn" data-value="π">π</button>
-                                <button class="calc-btn" data-value="e">e</button>
-                                <button class="calc-btn" data-value="√">√</button>
-                                <button class="calc-btn" data-value="x²">x²</button>
-                                <button class="calc-btn" data-value="x^y">x^y</button>
-                                <button class="calc-btn" data-value="7">7</button>
-                                <button class="calc-btn" data-value="8">8</button>
-                                <button class="calc-btn" data-value="9">9</button>
-                                <button class="calc-btn" data-value="/">/</button>
-                                <button class="calc-btn" data-value="C">C</button>
-                                <button class="calc-btn" data-value="4">4</button>
-                                <button class="calc-btn" data-value="5">5</button>
-                                <button class="calc-btn" data-value="6">6</button>
-                                <button class="calc-btn" data-value="*">×</button>
-                                <button class="calc-btn" data-value="(">(</button>
-                                <button class="calc-btn" data-value="1">1</button>
-                                <button class="calc-btn" data-value="2">2</button>
-                                <button class="calc-btn" data-value="3">3</button>
-                                <button class="calc-btn" data-value="-">-</button>
-                                <button class="calc-btn" data-value=")">)</button>
-                                <button class="calc-btn" data-value="0">0</button>
-                                <button class="calc-btn" data-value=".">.</button>
-                                <button class="calc-btn" data-value="=" style="grid-column: span 2;">=</button>
-                                <button class="calc-btn" data-value="+">+</button>
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>Scientific Calculator Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the Scientific Calculator. The full version includes trigonometric functions, logarithms, exponents, and more.</p>
+                                <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; width: 100%;">
+                                    <input type="text" id="calcDisplay" readonly style="width: 100%; padding: 15px; font-size: 1.2rem; text-align: right; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 15px;">
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                                        <button class="calc-btn" data-value="7">7</button>
+                                        <button class="calc-btn" data-value="8">8</button>
+                                        <button class="calc-btn" data-value="9">9</button>
+                                        <button class="calc-btn" data-value="/">/</button>
+                                        <button class="calc-btn" data-value="4">4</button>
+                                        <button class="calc-btn" data-value="5">5</button>
+                                        <button class="calc-btn" data-value="6">6</button>
+                                        <button class="calc-btn" data-value="*">×</button>
+                                        <button class="calc-btn" data-value="1">1</button>
+                                        <button class="calc-btn" data-value="2">2</button>
+                                        <button class="calc-btn" data-value="3">3</button>
+                                        <button class="calc-btn" data-value="-">-</button>
+                                        <button class="calc-btn" data-value="0">0</button>
+                                        <button class="calc-btn" data-value=".">.</button>
+                                        <button class="calc-btn" data-value="=" style="grid-column: span 2;">=</button>
+                                        <button class="calc-btn" data-value="+">+</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1181,15 +1257,26 @@
                     content = `
                         <h3>Text Case Converter</h3>
                         <p>Convert text between different case formats.</p>
-                        <textarea id="textInput" placeholder="Enter your text here..." style="width: 100%; height: 150px; padding: 15px; border: 1px solid #d1d5db; border-radius: 6px; margin: 20px 0; resize: vertical;"></textarea>
-                        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                            <button class="case-btn" data-case="upper" style="background-color: #1e40af; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 500; cursor: pointer;">UPPERCASE</button>
-                            <button class="case-btn" data-case="lower" style="background-color: #1e40af; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 500; cursor: pointer;">lowercase</button>
-                            <button class="case-btn" data-case="title" style="background-color: #1e40af; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 500; cursor: pointer;">Title Case</button>
-                            <button class="case-btn" data-case="sentence" style="background-color: #1e40af; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 500; cursor: pointer;">Sentence case</button>
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>Text Case Converter Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-text-height"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the Text Case Converter. The full version converts between uppercase, lowercase, title case, and sentence case.</p>
+                                <textarea id="textInput" placeholder="Enter your text here..." style="width: 100%; height: 100px; padding: 15px; border: 1px solid #d1d5db; border-radius: 6px; margin: 10px 0; resize: vertical;"></textarea>
+                                <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; width: 100%;">
+                                    <button class="case-btn action-button" data-case="upper">UPPERCASE</button>
+                                    <button class="case-btn action-button" data-case="lower">lowercase</button>
+                                    <button class="case-btn action-button" data-case="title">Title Case</button>
+                                </div>
+                                <textarea id="textOutput" placeholder="Converted text will appear here..." readonly style="width: 100%; height: 100px; padding: 15px; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 10px; resize: vertical; background-color: #f9fafb;"></textarea>
+                                <button class="action-button" style="width: 100%;">Copy Text</button>
+                            </div>
                         </div>
-                        <textarea id="textOutput" placeholder="Converted text will appear here..." readonly style="width: 100%; height: 150px; padding: 15px; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 20px; resize: vertical; background-color: #f9fafb;"></textarea>
-                        <button id="copyText" style="background-color: #1e40af; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; width: 100%;">Copy Text</button>
                     `;
                     break;
                     
@@ -1197,30 +1284,28 @@
                     content = `
                         <h3>QR Code Generator</h3>
                         <p>Create QR codes for URLs, text, or contact information.</p>
-                        <div style="margin: 20px 0;">
-                            <label for="qrContent">Enter content for QR code:</label>
-                            <input type="text" id="qrContent" placeholder="https://example.com" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; margin-top: 10px;">
-                        </div>
-                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="qrType" value="url" checked> URL
-                            </label>
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="qrType" value="text"> Text
-                            </label>
-                            <label style="display: flex; align-items: center;">
-                                <input type="radio" name="qrType" value="contact"> Contact
-                            </label>
-                        </div>
-                        <button id="generateQR" style="background-color: #1e40af; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; width: 100%; margin-bottom: 20px;">Generate QR Code</button>
-                        <div id="qrCodeContainer" style="text-align: center; padding: 20px; border: 1px dashed #d1d5db; border-radius: 8px; display: none;">
-                            <p>Your QR Code:</p>
-                            <div style="background-color: #f3f4f6; padding: 20px; display: inline-block; margin: 15px 0;">
-                                <div style="width: 200px; height: 200px; background-color: white; display: flex; align-items: center; justify-content: center; border: 1px solid #d1d5db;">
-                                    <span style="color: #6b7280;">QR Code Preview</span>
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>QR Code Generator Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the QR Code Generator. The full version creates customizable QR codes for various types of content.</p>
+                                <div style="margin: 10px 0; width: 100%;">
+                                    <label for="qrContent">Enter content for QR code:</label>
+                                    <input type="text" id="qrContent" placeholder="https://example.com" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; margin-top: 10px;">
+                                </div>
+                                <button class="action-button" style="width: 100%; margin-bottom: 15px;">Generate QR Code</button>
+                                <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; width: 100%;">
+                                    <div style="width: 150px; height: 150px; background-color: white; display: flex; align-items: center; justify-content: center; border: 1px solid #d1d5db; margin: 0 auto;">
+                                        <span style="color: #6b7280;">QR Code Preview</span>
+                                    </div>
+                                    <p style="margin-top: 10px; color: #6b7280;">Your QR code will appear here</p>
                                 </div>
                             </div>
-                            <button id="downloadQR" style="background-color: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer;">Download QR Code</button>
                         </div>
                     `;
                     break;
@@ -1228,10 +1313,19 @@
                 default:
                     content = `
                         <h3>${toolName}</h3>
-                        <p>This tool is currently under development. Please check back later for the full functionality.</p>
-                        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-                            <i class="fas fa-tools" style="font-size: 3rem; color: #6b7280; margin-bottom: 15px;"></i>
-                            <p>Tool coming soon!</p>
+                        <p>This tool helps you with ${toolName.toLowerCase()} tasks.</p>
+                        <div class="tool-preview">
+                            <div class="preview-header">
+                                <h3>${toolName} Preview</h3>
+                                <a href="#" class="full-tool-link">Open Full Tool <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-icon">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <p class="preview-message">This is a preview of the ${toolName}. The full version provides complete functionality for this tool.</p>
+                                <button class="action-button">Try ${toolName}</button>
+                            </div>
                         </div>
                     `;
             }
@@ -1244,8 +1338,6 @@
                 initializeCalculator();
             } else if (toolName === 'Text Case Converter') {
                 initializeCaseConverter();
-            } else if (toolName === 'QR Code Generator') {
-                initializeQRGenerator();
             }
         }
         
@@ -1279,26 +1371,10 @@
                 button.addEventListener('click', function() {
                     const value = this.getAttribute('data-value');
                     
-                    if (value === 'C') {
-                        display.value = '';
-                    } else if (value === '=') {
+                    if (value === '=') {
                         try {
                             // Replace display symbols with JavaScript equivalents
-                            let expression = display.value
-                                .replace(/×/g, '*')
-                                .replace(/π/g, Math.PI)
-                                .replace(/e/g, Math.E);
-                            
-                            // Handle special functions
-                            expression = expression.replace(/sin\(/g, 'Math.sin(');
-                            expression = expression.replace(/cos\(/g, 'Math.cos(');
-                            expression = expression.replace(/tan\(/g, 'Math.tan(');
-                            expression = expression.replace(/log\(/g, 'Math.log10(');
-                            expression = expression.replace(/ln\(/g, 'Math.log(');
-                            expression = expression.replace(/√\(/g, 'Math.sqrt(');
-                            expression = expression.replace(/x²/g, '**2');
-                            expression = expression.replace(/x\^y/g, '**');
-                            
+                            let expression = display.value.replace(/×/g, '*');
                             display.value = eval(expression);
                         } catch (error) {
                             display.value = 'Error';
@@ -1315,7 +1391,6 @@
             const textInput = document.getElementById('textInput');
             const textOutput = document.getElementById('textOutput');
             const caseButtons = document.querySelectorAll('.case-btn');
-            const copyButton = document.getElementById('copyText');
             
             caseButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -1335,39 +1410,9 @@
                                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                                 });
                                 break;
-                            case 'sentence':
-                                textOutput.value = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-                                break;
                         }
                     }
                 });
-            });
-            
-            copyButton.addEventListener('click', function() {
-                if (textOutput.value) {
-                    textOutput.select();
-                    document.execCommand('copy');
-                    alert('Text copied to clipboard!');
-                }
-            });
-        }
-        
-        // QR Code Generator functionality
-        function initializeQRGenerator() {
-            const generateButton = document.getElementById('generateQR');
-            const qrContainer = document.getElementById('qrCodeContainer');
-            
-            generateButton.addEventListener('click', function() {
-                const content = document.getElementById('qrContent').value;
-                if (content) {
-                    qrContainer.style.display = 'block';
-                } else {
-                    alert('Please enter content for the QR code');
-                }
-            });
-            
-            document.getElementById('downloadQR').addEventListener('click', function() {
-                alert('In a real implementation, this would download the QR code image.');
             });
         }
     </script>
