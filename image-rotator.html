@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Rotator & Flipper - OneKit</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      color: #1E1E2F;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      color: #1E3CFF;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background-color: #f8fafc;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 8px;
+      background-color: #1E3CFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3B82F6;
+      transform: scale(1.05);
+    }
+
+    canvas, img {
+      max-width: 100%;
+      margin-top: 15px;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      background-color: #1E3CFF;
+      color: #fff;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a.download-btn:hover {
+      background-color: #3B82F6;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tool-card">
+    <h2>Image Rotator & Flipper</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <div class="controls">
+      <button onclick="rotateLeft()">⟲ Rotate Left</button>
+      <button onclick="rotateRight()">⟳ Rotate Right</button>
+      <button onclick="flipHorizontal()">⇋ Flip Horizontal</button>
+      <button onclick="flipVertical()">⇅ Flip Vertical</button>
+    </div>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <a id="downloadBtn" class="download-btn" style="display: none;" download="edited-image.png">Download Image</a>
+  </div>
+
+  <footer>Made with 💙 by OneKit</footer>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    let image = new Image();
+    let rotation = 0;
+    let flipX = 1;
+    let flipY = 1;
+
+    document.getElementById("imageInput").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          image.onload = () => drawImage();
+          image.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function drawImage() {
+      const width = image.width;
+      const height = image.height;
+
+      if (rotation % 180 === 0) {
+        canvas.width = width;
+        canvas.height = height;
+      } else {
+        canvas.width = height;
+        canvas.height = width;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+
+      // Move to center
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.scale(flipX, flipY);
+
+      // Draw image centered
+      ctx.drawImage(image, -width / 2, -height / 2, width, height);
+      ctx.restore();
+
+      canvas.style.display = "block";
+      updateDownload();
+    }
+
+    function rotateLeft() {
+      rotation = (rotation - 90 + 360) % 360;
+      drawImage();
+    }
+
+    function rotateRight() {
+      rotation = (rotation + 90) % 360;
+      drawImage();
+    }
+
+    function flipHorizontal() {
+      flipX *= -1;
+      drawImage();
+    }
+
+    function flipVertical() {
+      flipY *= -1;
+      drawImage();
+    }
+
+    function updateDownload() {
+      downloadBtn.href = canvas.toDataURL("image/png");
+      downloadBtn.style.display = "inline-block";
+    }
+  </script>
+</body>
+</html>
