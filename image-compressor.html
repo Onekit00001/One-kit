@@ -1,125 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Compressor</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Compressor - OneKit</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
 
-        body {
-            background: #1E1E2F;
-            color: #EAEAEA;
-            text-align: center;
-            padding: 20px;
-        }
+    .tool-card {
+      background: #ffffff;
+      color: #1E1E2F;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #2B2D42;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
-        }
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
 
-        input, select, button {
-            margin: 10px 0;
-            padding: 10px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
+    h2 {
+      color: #1E3CFF;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
 
-        button {
-            background: #FFD700;
-            color: #1E1E2F;
-            cursor: pointer;
-        }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #1E1E2F;
+    }
 
-        button:hover {
-            background: #E6C200;
-        }
+    input[type="file"],
+    select {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background-color: #f8fafc;
+    }
 
-        img {
-            margin-top: 10px;
-            max-width: 100%;
-            border-radius: 5px;
-        }
+    button {
+      padding: 12px 24px;
+      margin-top: 15px;
+      background-color: #1E3CFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
 
-        .hidden {
-            display: none;
-        }
-    </style>
+    button:hover {
+      background-color: #3B82F6;
+      transform: scale(1.05);
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #1E3CFF;
+      font-weight: bold;
+    }
+
+    img {
+      margin-top: 15px;
+      max-width: 100%;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      background-color: #1E3CFF;
+      color: #fff;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a.download-btn:hover {
+      background-color: #3B82F6;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .tool-card {
+        padding: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Image Compressor</h2>
-        <input type="file" id="imageInput" accept="image/*">
-        <label for="quality">Select Quality:</label>
-        <select id="quality">
-            <option value="0.8">High</option>
-            <option value="0.5">Medium</option>
-            <option value="0.2">Low</option>
-        </select>
-        <button onclick="compressImage()">Compress</button>
-        <p id="status" class="hidden">Compressing image...</p>
-        <img id="preview" class="hidden">
-        <a id="download" class="hidden" download="compressed-image.jpg">
-            <button>Download</button>
-        </a>
-    </div>
+  <div class="tool-card">
+    <h2>Image Compressor</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <label for="quality">Select Quality:</label>
+    <select id="quality">
+      <option value="0.8">High</option>
+      <option value="0.5">Medium</option>
+      <option value="0.2">Low</option>
+    </select>
+    <button onclick="compressImage()">Compress</button>
+    <p id="status" class="hidden">Compressing image...</p>
+    <img id="preview" class="hidden" />
+    <a id="download" class="download-btn hidden" download="compressed-image.jpg">Download Compressed Image</a>
+  </div>
 
-    <script>
-        function compressImage() {
-            const fileInput = document.getElementById('imageInput');
-            const quality = parseFloat(document.getElementById('quality').value);
-            const status = document.getElementById('status');
-            const preview = document.getElementById('preview');
-            const download = document.getElementById('download');
+  <footer>Made with 💙 by OneKit</footer>
 
-            if (fileInput.files.length === 0) {
-                alert('Please upload an image first.');
-                return;
-            }
+  <script>
+    function compressImage() {
+      const fileInput = document.getElementById("imageInput");
+      const quality = parseFloat(document.getElementById("quality").value);
+      const status = document.getElementById("status");
+      const preview = document.getElementById("preview");
+      const download = document.getElementById("download");
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    status.classList.remove('hidden');
-                    setTimeout(() => {
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                        preview.src = compressedDataUrl;
-                        preview.classList.remove('hidden');
-                        
-                        download.href = compressedDataUrl;
-                        download.classList.remove('hidden');
-                        status.classList.add('hidden');
-                    }, 1000);
-                };
-            };
-            
-            reader.readAsDataURL(file);
-        }
-    </script>
+      if (fileInput.files.length === 0) {
+        alert("Please upload an image first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          status.classList.remove("hidden");
+          setTimeout(() => {
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+            preview.src = compressedDataUrl;
+            preview.classList.remove("hidden");
+
+            download.href = compressedDataUrl;
+            download.classList.remove("hidden");
+            status.classList.add("hidden");
+          }, 800);
+        };
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
 </body>
 </html>
-
-  
