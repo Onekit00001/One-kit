@@ -1,108 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Crop Tool</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
-    <style>
-        body {
-            background-color: #1E1E2F;
-            color: #EAEAEA;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #2B2D42;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
-        }
-        .preview-container {
-            margin-top: 10px;
-        }
-        .crop-options {
-            margin-top: 10px;
-        }
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            background: #FFD700;
-            color: #1E1E2F;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #E6C200;
-        }
-        img {
-            max-width: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Crop Tool - OneKit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      color: #1E1E2F;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      color: #1E3CFF;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background-color: #f8fafc;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      margin-top: 15px;
+    }
+
+    .crop-options {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #1E3CFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3B82F6;
+      transform: scale(1.05);
+    }
+
+    a#downloadLink {
+      display: inline-block;
+      background-color: #1E3CFF;
+      color: #fff;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a#downloadLink:hover {
+      background-color: #3B82F6;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .crop-options {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Image Crop Tool</h2>
-        <input type="file" id="imageInput" accept="image/*">
-        <div class="preview-container">
-            <img id="imagePreview">
-        </div>
-        <div class="crop-options">
-            <button onclick="setAspectRatio(4/3)">4:3</button>
-            <button onclick="setAspectRatio(16/9)">16:9</button>
-            <button onclick="setAspectRatio(16/10)">16:10</button>
-            <button onclick="setAspectRatio(3/2)">3:2</button>
-            <button onclick="setAspectRatio(1/1)">1:1</button>
-            <button onclick="setAspectRatio(NaN)">Freeform</button>
-            <button onclick="cropImage()">Crop</button>
-        </div>
-        <canvas id="croppedCanvas" style="display: none;"></canvas>
-        <a id="downloadLink" style="display: none;" download="cropped-image.png">Download Cropped Image</a>
+  <div class="tool-card">
+    <h2>Image Crop Tool</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <div class="preview-container">
+      <img id="imagePreview" />
     </div>
+    <div class="crop-options">
+      <button onclick="setAspectRatio(4/3)">4:3</button>
+      <button onclick="setAspectRatio(16/9)">16:9</button>
+      <button onclick="setAspectRatio(16/10)">16:10</button>
+      <button onclick="setAspectRatio(3/2)">3:2</button>
+      <button onclick="setAspectRatio(1/1)">1:1</button>
+      <button onclick="setAspectRatio(NaN)">Freeform</button>
+      <button onclick="cropImage()">Crop</button>
+    </div>
+    <canvas id="croppedCanvas" style="display: none;"></canvas>
+    <a id="downloadLink" style="display: none;" download="cropped-image.png">Download Cropped Image</a>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-        let cropper;
-        document.getElementById('imageInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imagePreview').src = e.target.result;
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-                    cropper = new Cropper(document.getElementById('imagePreview'), {
-                        aspectRatio: 4 / 3,
-                        viewMode: 1
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+  <footer>Made with 💙 by OneKit</footer>
 
-        function setAspectRatio(ratio) {
-            if (cropper) {
-                cropper.setAspectRatio(ratio);
-            }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script>
+    let cropper;
+    document.getElementById("imageInput").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("imagePreview").src = e.target.result;
+          if (cropper) {
+            cropper.destroy();
+          }
+          cropper = new Cropper(document.getElementById("imagePreview"), {
+            aspectRatio: 4 / 3,
+            viewMode: 1,
+            responsive: true,
+            background: false
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function setAspectRatio(ratio) {
+      if (cropper) {
+        cropper.setAspectRatio(ratio);
+      }
+    }
+
+    function cropImage() {
+      if (cropper) {
+        const canvas = cropper.getCroppedCanvas();
+        if (canvas) {
+          document.getElementById("croppedCanvas").replaceWith(canvas);
+          canvas.id = "croppedCanvas";
+          document.getElementById("downloadLink").href = canvas.toDataURL();
+          document.getElementById("downloadLink").style.display = "inline-block";
         }
-
-        function cropImage() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas();
-                if (canvas) {
-                    document.getElementById('croppedCanvas').replaceWith(canvas);
-                    canvas.id = 'croppedCanvas';
-                    document.getElementById('downloadLink').href = canvas.toDataURL();
-                    document.getElementById('downloadLink').style.display = 'block';
-                }
-            }
-        }
-    </script>
+      }
+    }
+  </script>
 </body>
 </html>
-
-  
