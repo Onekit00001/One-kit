@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image to Text - OneKit</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      color: #1E1E2F;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      color: #1E3CFF;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background-color: #f8fafc;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background-color: #1E3CFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3B82F6;
+      transform: scale(1.05);
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 15px;
+      border: 2px solid #e5e7eb;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      font-size: 14px;
+      font-family: monospace;
+      background-color: #f8fafc;
+      color: #1E1E2F;
+      resize: none;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      background-color: #1E3CFF;
+      color: #fff;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a.download-btn:hover {
+      background-color: #3B82F6;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      button, a.download-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tool-card">
+    <h2>Image to Text (OCR)</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <button onclick="extractText()">Extract Text</button>
+    <p id="status"></p>
+    <img id="preview" style="display: none;" />
+    <textarea id="outputText" placeholder="Extracted text will appear here..." readonly></textarea>
+    <button onclick="copyText()">Copy Text</button>
+    <a id="downloadBtn" class="download-btn" style="display: none;">Download Text</a>
+  </div>
+
+  <footer>Made with 💙 by OneKit</footer>
+
+  <script>
+    async function extractText() {
+      const fileInput = document.getElementById("imageInput");
+      const status = document.getElementById("status");
+      const preview = document.getElementById("preview");
+      const outputText = document.getElementById("outputText");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      if (!fileInput.files.length) {
+        alert("Please upload an image first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async function (event) {
+        const imageUrl = event.target.result;
+        preview.src = imageUrl;
+        preview.style.display = "block";
+        status.textContent = "Processing... Please wait while text is extracted.";
+
+        try {
+          const result = await Tesseract.recognize(imageUrl, "eng", {
+            logger: (info) => {
+              if (info.status === "recognizing text") {
+                status.textContent = `Extracting text... (${Math.round(info.progress * 100)}%)`;
+              }
+            },
+          });
+
+          const text = result.data.text.trim();
+          outputText.value = text || "No text detected.";
+          status.textContent = "✅ Extraction complete!";
+
+          // Enable download
+          const blob = new Blob([text], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          downloadBtn.href = url;
+          downloadBtn.download = "extracted-text.txt";
+          downloadBtn.style.display = "inline-block";
+        } catch (error) {
+          console.error(error);
+          status.textContent = "❌ Failed to extract text. Try a clearer image.";
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function copyText() {
+      const text = document.getElementById("outputText").value;
+      if (text.trim() === "") {
+        alert("No text to copy!");
+        return;
+      }
+      navigator.clipboard.writeText(text);
+      alert("Text copied to clipboard!");
+    }
+  </script>
+</body>
+</html>
