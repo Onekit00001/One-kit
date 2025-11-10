@@ -1,118 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Converter Tool</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Format Converter - OneKit</title>
+  <style>
+    /* Global Style */
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
 
-        body {
-            background: #1E1E2F;
-            color: #EAEAEA;
-            text-align: center;
-            padding: 20px;
-        }
+    .tool-card {
+      background: #ffffff;
+      color: #1E1E2F;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #2B2D42;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
-        }
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
 
-        input, select, button {
-            margin: 10px 0;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            border: none;
-        }
+    h2 {
+      color: #1E3CFF;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
 
-        button {
-            background: #FFD700;
-            color: #1E1E2F;
-            cursor: pointer;
-            font-weight: bold;
-        }
+    input[type="file"],
+    select {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      background-color: #f8fafc;
+    }
 
-        button:hover {
-            background: #E6C200;
-        }
+    button {
+      padding: 12px 24px;
+      margin-top: 15px;
+      background-color: #1E3CFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
 
-        .preview {
-            margin-top: 20px;
-        }
-    </style>
+    button:hover {
+      background-color: #3B82F6;
+      transform: scale(1.05);
+    }
+
+    .preview {
+      margin-top: 20px;
+    }
+
+    .preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 2px solid #e5e7eb;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      background-color: #1E3CFF;
+      color: #fff;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a.download-btn:hover {
+      background-color: #3B82F6;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #1E3CFF;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .tool-card {
+        padding: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Image Converter</h2>
-        <input type="file" id="imageInput" accept="image/*">
-        <select id="formatSelect">
-            <option value="png">PNG</option>
-            <option value="jpg">JPG</option>
-            <option value="webp">WEBP</option>
-        </select>
-        <button onclick="convertImage()">Convert Image</button>
-        <p id="status"></p>
-        <div class="preview" id="previewContainer"></div>
-    </div>
+  <div class="tool-card">
+    <h2>Image Format Converter</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <select id="formatSelect">
+      <option value="png">PNG</option>
+      <option value="jpg">JPG</option>
+      <option value="jpeg">JPEG</option>
+      <option value="webp">WEBP</option>
+      <option value="gif">GIF</option>
+      <option value="bmp">BMP</option>
+      <option value="tiff">TIFF</option>
+    </select>
+    <button onclick="convertImage()">Convert Image</button>
+    <p id="status"></p>
+    <div class="preview" id="previewContainer"></div>
+  </div>
 
-    <script>
-        function convertImage() {
-            const fileInput = document.getElementById('imageInput');
-            const format = document.getElementById('formatSelect').value;
-            const status = document.getElementById('status');
-            const previewContainer = document.getElementById('previewContainer');
+  <footer>Made with 💙 by OneKit</footer>
 
-            if (!fileInput.files.length) {
-                alert('Please upload an image first.');
-                return;
-            }
+  <script>
+    function convertImage() {
+      const fileInput = document.getElementById("imageInput");
+      const format = document.getElementById("formatSelect").value;
+      const status = document.getElementById("status");
+      const previewContainer = document.getElementById("previewContainer");
 
-            status.textContent = 'Processing image...';
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+      if (!fileInput.files.length) {
+        alert("Please upload an image first.");
+        return;
+      }
 
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    const convertedImage = canvas.toDataURL(`image/${format}`);
-                    previewContainer.innerHTML = `<img src="${convertedImage}" style="max-width: 100%; border-radius: 5px; margin-top: 10px;">`;
-                    const downloadBtn = document.createElement('a');
-                    downloadBtn.href = convertedImage;
-                    downloadBtn.download = `converted_image.${format}`;
-                    downloadBtn.textContent = 'Download Image';
-                    downloadBtn.style.display = 'block';
-                    downloadBtn.style.background = '#FFD700';
-                    downloadBtn.style.color = '#1E1E2F';
-                    downloadBtn.style.padding = '10px';
-                    downloadBtn.style.marginTop = '10px';
-                    downloadBtn.style.textDecoration = 'none';
-                    downloadBtn.style.borderRadius = '5px';
-                    previewContainer.appendChild(downloadBtn);
-                    status.textContent = '';
-                };
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
+      status.textContent = "Processing image...";
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const mimeType = `image/${format}`;
+          const convertedImage = canvas.toDataURL(mimeType);
+
+          // Show preview
+          previewContainer.innerHTML = `<img src="${convertedImage}" alt="Converted Preview">`;
+
+          // Download button
+          const downloadBtn = document.createElement("a");
+          downloadBtn.href = convertedImage;
+          downloadBtn.download = `converted_image.${format}`;
+          downloadBtn.textContent = "Download Converted Image";
+          downloadBtn.classList.add("download-btn");
+
+          previewContainer.appendChild(downloadBtn);
+          status.textContent = "";
+        };
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
 </body>
 </html>
-
-  
