@@ -1,119 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PDF ↔ Word Converter - OneKit</title>
-<style>
-body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg,#1E3CFF,#3B82F6); color:#fff; text-align:center; margin:0; padding:40px 20px; }
-.tool-card { background:#fff; color:#1E1E2F; max-width:700px; margin:0 auto; padding:25px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.25); transition:all 0.3s ease; }
-.tool-card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.3); }
-h2 { color:#1E3CFF; margin-bottom:20px; font-size:1.8rem; }
-input[type="file"] { margin:15px 0; padding:10px; width:100%; border-radius:8px; border:1px solid #d1d5db; font-size:15px; background-color:#f8fafc; }
-button { padding:10px 20px; margin:8px; background-color:#1E3CFF; color:white; border:none; border-radius:8px; cursor:pointer; font-size:15px; transition:all 0.3s ease; }
-button:hover { background-color:#3B82F6; transform:scale(1.05); }
-a.download-btn { display:inline-block; background-color:#1E3CFF; color:#fff; padding:10px 20px; margin-top:15px; border-radius:8px; text-decoration:none; transition:all 0.3s ease; }
-a.download-btn:hover { background-color:#3B82F6; }
-footer { margin-top:30px; color:rgba(255,255,255,0.8); font-size:0.9rem; }
-@media(max-width:600px){button{width:100%;}}
-</style>
-</head>
-<body>
+<form id="uploadForm" enctype="multipart/form-data">
+  <input type="file" name="file" id="fileInput" required>
+  <select name="conversion" id="conversion">
+    <option value="pdf_to_word">PDF → Word</option>
+    <option value="word_to_pdf">Word → PDF</option>
+  </select>
+  <button type="submit">Convert</button>
+</form>
 
-<div class="tool-card">
-  <h2>PDF ↔ Word Converter</h2>
-  <input type="file" id="fileInput" accept=".pdf,.docx,.doc"/>
-  <div class="controls">
-    <button onclick="convertPDFtoWord()">Convert PDF → Word</button>
-    <button onclick="convertWordToPDF()">Convert Word → PDF</button>
-  </div>
-  <a id="downloadBtn" class="download-btn" style="display:none;">Download File</a>
-</div>
-
-<footer>Made with 💙 by OneKit</footer>
-
-<!-- Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.3.0/docx.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<a id="downloadLink" style="display:none">Download Converted File</a>
 
 <script>
-const fileInput = document.getElementById("fileInput");
-const downloadBtn = document.getElementById("downloadBtn");
-let uploadedFile = null;
+const form = document.getElementById('uploadForm');
+const downloadLink = document.getElementById('downloadLink');
 
-fileInput.addEventListener("change", e => {
-  uploadedFile = e.target.files[0];
-  downloadBtn.style.display = "none";
-});
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('fileInput');
+  const conversion = document.getElementById('conversion').value;
+  const file = fileInput.files[0];
+  if(!file) return;
 
-// PDF → Word (Text extraction using PDF.js)
-async function convertPDFtoWord() {
-  if (!uploadedFile || uploadedFile.type !== "application/pdf") { alert("Please upload a valid PDF."); return; }
-  const arrayBuffer = await uploadedFile.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = "";
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('conversion', conversion);
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-    const pageText = textContent.items.map(item => item.str).join(" ");
-    fullText += pageText + "\n\n";
+  // Send request to Python backend
+  const response = await fetch('http://localhost:5000/convert', {
+    method: 'POST',
+    body: formData
+  });
+
+  if (response.ok) {
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    downloadLink.href = url;
+    downloadLink.download = file.name.split('.')[0] + (conversion === 'pdf_to_word' ? '.docx' : '.pdf');
+    downloadLink.style.display = 'inline';
+    downloadLink.textContent = 'Download Converted File';
+  } else {
+    alert('Conversion failed!');
   }
-
-  const { Document, Packer, Paragraph, TextRun } = docx;
-  const doc = new Document({ sections: [{ children: [new Paragraph({ children: [new TextRun(fullText)]) }] }] });
-  const blob = await Packer.toBlob(doc);
-  saveAs(blob, uploadedFile.name.replace(/\.pdf$/i, ".docx"));
-  downloadBtn.style.display = "inline-block";
-  downloadBtn.textContent = "Download Converted Word File";
 });
-
-// Word → PDF (Preserves basic formatting)
-async function convertWordToPDF() {
-  if (!uploadedFile || !uploadedFile.name.match(/\.(docx?|doc)$/i)) { alert("Please upload a Word file."); return; }
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const arrayBuffer = e.target.result;
-    const result = await mammoth.convertToHtml({ arrayBuffer });
-    const html = result.value;
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const tmpDiv = document.createElement("div");
-    tmpDiv.innerHTML = html;
-    let y = 20;
-    const lineHeight = 7;
-
-    function addNode(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const lines = node.textContent.split("\n");
-        lines.forEach(line => {
-          pdf.text(line, 10, y);
-          y += lineHeight;
-          if (y > pdf.internal.pageSize.getHeight() - 20) { pdf.addPage(); y = 20; }
-        });
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const tag = node.tagName.toLowerCase();
-        if (tag === "b" || tag === "strong") { pdf.setFont(undefined, "bold"); } 
-        else { pdf.setFont(undefined, "normal"); }
-        Array.from(node.childNodes).forEach(child => addNode(child));
-        pdf.setFont(undefined, "normal");
-      }
-    }
-
-    Array.from(tmpDiv.childNodes).forEach(child => addNode(child));
-
-    const pdfBlob = pdf.output("blob");
-    saveAs(pdfBlob, uploadedFile.name.replace(/\.(docx?|doc)$/i, ".pdf"));
-    downloadBtn.style.display = "inline-block";
-    downloadBtn.textContent = "Download Converted PDF File";
-  };
-  reader.readAsArrayBuffer(uploadedFile);
-}
 </script>
-
-</body>
-</html>
