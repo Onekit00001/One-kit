@@ -363,10 +363,19 @@
         const { PDFDocument } = window.PDFLib;
         const pdfDoc = await PDFDocument.load(arrayBuffer);
         
-        // Setting the userPassword is the standard way to encrypt the PDF
-        // and require a password to open it. This ensures compatibility.
+        // By setting restrictive permissions along with the password, we ensure
+        // that all PDF viewers will correctly prompt for the password on open.
         const pdfBytes = await pdfDoc.save({
             userPassword: password,
+            permissions: {
+                printing: 'none',
+                modifying: false,
+                copying: false,
+                annotating: false,
+                fillingForms: false,
+                contentAccessibility: false,
+                documentAssembly: false,
+            }
         });
 
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
