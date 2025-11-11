@@ -134,6 +134,9 @@
         cursor: pointer;
         padding: 0 12px;
         color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .password-toggle:hover {
         color: #334155;
@@ -323,32 +326,6 @@
         actionBtn.disabled = !(isFileSelected && isPasswordValid);
       }
 
-      // --- Event Listeners ---
-      modeLockRadio.addEventListener('change', () => updateUIForMode('lock'));
-      modeUnlockRadio.addEventListener('change', () => updateUIForMode('unlock'));
-      uploadBox.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (event) => {
-          uploadedFile = event.target.files[0] || null;
-          fileNameDisplay.textContent = uploadedFile ? `Selected: ${uploadedFile.name}` : '';
-          validateInputs();
-      });
-      [passwordInput, confirmPasswordInput].forEach(input => {
-        input.addEventListener('input', validateInputs);
-      });
-      passwordToggleButtons.forEach(button => {
-        button.innerHTML = eyeIcon;
-        button.addEventListener('click', () => {
-            const targetInput = document.getElementById(button.dataset.target);
-            if (targetInput) {
-                const isPassword = targetInput.type === 'password';
-                targetInput.type = isPassword ? 'text' : 'password';
-                button.innerHTML = isPassword ? eyeOffIcon : eyeIcon;
-                button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-            }
-        });
-      });
-      actionBtn.addEventListener('click', handleAction);
-
       // --- Core Action ---
       async function handleAction() {
         if (!uploadedFile) return;
@@ -423,6 +400,39 @@
           downloadLink.classList.remove('hidden');
           showLoading(false);
       }
+      
+      // --- Event Listeners (Attach Once) ---
+      modeLockRadio.addEventListener('change', () => updateUIForMode('lock'));
+      modeUnlockRadio.addEventListener('change', () => updateUIForMode('unlock'));
+      
+      uploadBox.addEventListener('click', () => fileInput.click());
+      
+      fileInput.addEventListener('change', (event) => {
+          uploadedFile = event.target.files[0] || null;
+          fileNameDisplay.textContent = uploadedFile ? `Selected: ${uploadedFile.name}` : '';
+          validateInputs();
+      });
+      
+      [passwordInput, confirmPasswordInput].forEach(input => {
+        input.addEventListener('input', validateInputs);
+      });
+      
+      passwordToggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetInput = document.getElementById(button.dataset.target);
+            if (targetInput) {
+                const isPassword = targetInput.type === 'password';
+                targetInput.type = isPassword ? 'text' : 'password';
+                button.innerHTML = isPassword ? eyeOffIcon : eyeIcon;
+                button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            }
+        });
+      });
+      
+      actionBtn.addEventListener('click', handleAction);
+      
+      // --- Initial UI Setup ---
+      updateUIForMode('lock');
     });
   </script>
 </body>
