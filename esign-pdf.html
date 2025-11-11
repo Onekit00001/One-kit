@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eSign PDF - OneKit</title>
-  <!-- Libraries for PDF manipulation -->
+  <title>eSign Document - OneKit</title>
+  <!-- Libraries for PDF manipulation and conversion -->
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <!-- Google Fonts for typed signature -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,7 +195,7 @@
     .action-button:hover { background-color: #3B82F6; }
     .action-button:disabled { background-color: #a9b7d0; cursor: not-allowed; }
 
-    #status {
+    #status, #status-initial {
       margin-top: 15px;
       color: #1E3CFF;
       font-weight: bold;
@@ -236,10 +237,10 @@
   <a href="/" class="home-link">&larr; Back to All Tools</a>
   <div class="tool-card">
     <div id="upload-screen">
-        <h2>eSign PDF</h2>
-        <input type="file" id="pdf-upload" accept=".pdf,application/pdf" />
+        <h2>eSign Document</h2>
+        <input type="file" id="doc-upload" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.txt" />
         <div id="upload-box" role="button" tabindex="0">
-            <p>Click to upload PDF to sign</p>
+            <p>Upload PDF, Word, Image, or Text file</p>
         </div>
         <p id="status-initial" aria-live="polite">Loading libraries...</p>
     </div>
@@ -304,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Library Loading Check ---
     const statusInitial = document.getElementById('status-initial');
     window.addEventListener('load', () => {
-        if (window.pdfjsLib && window.PDFLib) {
+        if (window.pdfjsLib && window.PDFLib && window.mammoth) {
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
             statusInitial.textContent = '';
         } else {
@@ -316,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadScreen = document.getElementById('upload-screen');
     const signingScreen = document.getElementById('signing-screen');
     const uploadBox = document.getElementById('upload-box');
-    const pdfUploadInput = document.getElementById('pdf-upload');
+    const docUploadInput = document.getElementById('doc-upload');
     
     const pdfCanvas = document.getElementById('pdf-canvas');
     const pdfCtx = pdfCanvas.getContext('2d');
@@ -351,34 +352,93 @@ document.addEventListener('DOMContentLoaded', () => {
     let originalPdfBytes = null;
     let signatureDataUrl = null;
 
-    // --- PDF Handling ---
-    uploadBox.addEventListener('click', () => pdfUploadInput.click());
-    pdfUploadInput.addEventListener('change', handlePdfUpload);
+    // --- File Upload & Conversion ---
+    uploadBox.addEventListener('click', () => docUploadInput.click());
+    docUploadInput.addEventListener('change', handleFileUpload);
 
-    async function handlePdfUpload(e) {
+    async function handleFileUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
 
-        showLoading(true, 'Reading PDF...');
-        const fileReader = new FileReader();
-        fileReader.onload = async function() {
-            originalPdfBytes = new Uint8Array(this.result);
-            try {
-                pdfDoc = await window.pdfjsLib.getDocument(originalPdfBytes).promise;
-                pageCountEl.textContent = pdfDoc.numPages;
-                pageNum = 1;
-                await renderPage(pageNum);
-                uploadScreen.classList.add('hidden');
-                signingScreen.classList.remove('hidden');
-            } catch(err) {
-                showLoading(false, 'Error: Could not open PDF.');
-                console.error(err);
+        showLoading(true, 'Reading file...');
+        const fileType = file.type;
+        const fileName = file.name.toLowerCase();
+
+        try {
+            let pdfBytes;
+            if (fileType === 'application/pdf') {
+                showLoading(true, 'Loading PDF...');
+                pdfBytes = new Uint8Array(await file.arrayBuffer());
+            } else if (fileName.endsWith('.docx')) {
+                showLoading(true, 'Converting Word to PDF...');
+                pdfBytes = await convertDocxToPdfBytes(file);
+            } else if (fileType.startsWith('image/')) {
+                showLoading(true, 'Converting Image to PDF...');
+                pdfBytes = await convertImageToPdfBytes(file);
+            } else if (fileType === 'text/plain' || fileName.endsWith('.txt')) {
+                showLoading(true, 'Converting Text to PDF...');
+                pdfBytes = await convertTxtToPdfBytes(file);
+            } else {
+                throw new Error('Unsupported file type. Please upload a PDF, DOCX, image, or TXT file.');
             }
-            showLoading(false);
-        };
-        fileReader.readAsArrayBuffer(file);
+            
+            originalPdfBytes = pdfBytes;
+            pdfDoc = await window.pdfjsLib.getDocument(originalPdfBytes).promise;
+            pageCountEl.textContent = pdfDoc.numPages;
+            pageNum = 1;
+            await renderPage(pageNum);
+            uploadScreen.classList.add('hidden');
+            signingScreen.classList.remove('hidden');
+
+        } catch(err) {
+            showLoading(false, `Error: ${err.message}`);
+            console.error(err);
+        }
+        showLoading(false);
+    }
+
+    async function convertDocxToPdfBytes(file) {
+        const { mammoth, PDFLib } = window;
+        const arrayBuffer = await file.arrayBuffer();
+        const { value: text } = await mammoth.extractRawText({ arrayBuffer });
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const page = pdfDoc.addPage();
+        const { width, height } = page.getSize();
+        const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+        page.drawText(text || '', { x: 50, y: height - 50, size: 11, font, lineHeight: 14, maxWidth: width - 100 });
+        return pdfDoc.save();
+    }
+
+    async function convertImageToPdfBytes(file) {
+        const { PDFLib } = window;
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        let image;
+        if (file.type === 'image/jpeg') {
+            image = await pdfDoc.embedJpg(arrayBuffer);
+        } else if (file.type === 'image/png') {
+            image = await pdfDoc.embedPng(arrayBuffer);
+        } else {
+            throw new Error('Unsupported image type.');
+        }
+
+        const page = pdfDoc.addPage([image.width, image.height]);
+        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+        return pdfDoc.save();
     }
     
+    async function convertTxtToPdfBytes(file) {
+        const { PDFLib } = window;
+        const text = await file.text();
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const page = pdfDoc.addPage();
+        const { width, height } = page.getSize();
+        const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+        page.drawText(text, { x: 50, y: height - 50, size: 11, font, lineHeight: 14, maxWidth: width - 100 });
+        return pdfDoc.save();
+    }
+    
+    // --- PDF Rendering ---
     async function renderPage(num) {
         pageRendering = true;
         const page = await pdfDoc.getPage(num);
@@ -484,7 +544,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tempCanvas.width = textMetrics.width;
         tempCanvas.height = 50;
         
-        // Redraw with correct dimensions
         tempCtx.font = `48px "${font}", cursive`;
         tempCtx.fillStyle = 'black';
         tempCtx.textBaseline = 'middle';
@@ -529,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.querySelector('img').src = dataUrl;
         wrapper.style.display = 'flex';
         wrapper.style.width = '150px';
-        wrapper.style.height = 'auto'; // Auto height to maintain aspect ratio
+        wrapper.style.height = 'auto';
         wrapper.style.top = '50px';
         wrapper.style.left = '50px';
     }
@@ -543,7 +602,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function makeInteractive(element) {
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
         
-        // Dragging
         element.onmousedown = function(e) {
             if (e.target.classList.contains('resize-handle')) return;
             e.preventDefault();
@@ -568,7 +626,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.onmousemove = null;
         }
 
-        // Resizing
         const resizeHandle = element.querySelector('.resize-handle');
         resizeHandle.onmousedown = function(e) {
             e.preventDefault();
@@ -576,19 +633,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const startX = e.clientX;
             const startY = e.clientY;
             const startWidth = parseInt(document.defaultView.getComputedStyle(element).width, 10);
-            const startHeight = parseInt(document.defaultView.getComputedStyle(element).height, 10);
-
+            
             document.onmousemove = doResize;
             document.onmouseup = stopResize;
 
             function doResize(e) {
                 const width = startWidth + e.clientX - startX;
-                const height = startHeight + e.clientY - startY;
                 if (width > 20) {
                     element.style.width = width + 'px';
+                    element.style.height = 'auto'; 
                 }
-                // Maintain aspect ratio by setting height to auto
-                element.style.height = 'auto'; 
             }
             function stopResize() {
                 document.onmousemove = null;
@@ -610,10 +664,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { PDFDocument } = window.PDFLib;
             const pdfDocToModify = await PDFDocument.load(originalPdfBytes);
+            
+            let signatureImage;
+            if (signatureDataUrl.startsWith('data:image/png')) {
+                signatureImage = await pdfDocToModify.embedPng(signatureDataUrl);
+            } else if (signatureDataUrl.startsWith('data:image/jpeg')) {
+                signatureImage = await pdfDocToModify.embedJpg(signatureDataUrl);
+            } else {
+                throw new Error('Unsupported signature image format. Use PNG or JPEG.');
+            }
+
             const page = pdfDocToModify.getPages()[pageNum - 1];
-
-            const signatureImage = await pdfDocToModify.embedPng(signatureDataUrl);
-
             const scale = page.getWidth() / pdfCanvas.width;
             
             const sigX = wrapper.offsetLeft * scale;
@@ -621,17 +682,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const sigWidth = wrapper.offsetWidth * scale;
             const sigHeight = wrapper.offsetHeight * scale;
 
-            page.drawImage(signatureImage, {
-                x: sigX,
-                y: sigY,
-                width: sigWidth,
-                height: sigHeight,
-            });
+            page.drawImage(signatureImage, { x: sigX, y: sigY, width: sigWidth, height: sigHeight });
 
             const pdfBytes = await pdfDocToModify.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             
-            const originalName = pdfUploadInput.files[0].name.replace(/\.pdf$/i, '');
+            const originalName = docUploadInput.files[0].name.split('.').slice(0, -1).join('.') || docUploadInput.files[0].name;
             displayDownloadLink(URL.createObjectURL(blob), `${originalName}-signed.pdf`);
 
         } catch(err) {
@@ -642,13 +698,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Utility Functions ---
     function showLoading(isLoading, message = '') {
-        statusEl.textContent = message;
+        const targetStatus = signingScreen.classList.contains('hidden') ? statusInitial : statusEl;
+        targetStatus.textContent = message;
         applyBtn.disabled = isLoading;
         if(isLoading) downloadLink.classList.add('hidden');
     }
 
     function displayDownloadLink(url, filename) {
-        showLoading(false, 'Your signed PDF is ready!');
+        showLoading(false, 'Your signed document is ready!');
         downloadLink.href = url;
         downloadLink.download = filename;
         downloadLink.textContent = `Download ${filename}`;
