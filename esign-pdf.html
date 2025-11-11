@@ -401,11 +401,61 @@ document.addEventListener('DOMContentLoaded', () => {
         const { mammoth, PDFLib } = window;
         const arrayBuffer = await file.arrayBuffer();
         const { value: text } = await mammoth.extractRawText({ arrayBuffer });
-        const pdfDoc = await PDFLib.PDFDocument.create();
-        const page = pdfDoc.addPage();
+        
+        const { PDFDocument, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        
+        let page = pdfDoc.addPage();
         const { width, height } = page.getSize();
-        const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-        page.drawText(text || '', { x: 50, y: height - 50, size: 11, font, lineHeight: 14, maxWidth: width - 100 });
+        const margin = 50;
+        const maxWidth = width - 2 * margin;
+        const fontSize = 11;
+        const lineHeight = 14;
+        let y = height - margin;
+
+        const paragraphs = (text || '').split('\n\n');
+
+        for (const paragraph of paragraphs) {
+            const lines = [];
+            let currentLine = '';
+            const paragraphLines = paragraph.split('\n');
+            
+            for (const pLine of paragraphLines) {
+                const words = pLine.split(' ');
+                for (const word of words) {
+                    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                    const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+                    if (testWidth > maxWidth) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                lines.push(currentLine);
+                currentLine = '';
+            }
+
+            for (const line of lines) {
+                 if (y < margin + lineHeight) {
+                    page = pdfDoc.addPage();
+                    y = height - margin;
+                }
+                page.drawText(line, {
+                    x: margin,
+                    y: y,
+                    size: fontSize,
+                    font,
+                    lineHeight: lineHeight,
+                });
+                y -= lineHeight;
+            }
+            if (paragraphs.length > 1) {
+                y -= (lineHeight / 2);
+            }
+        }
+        
         return pdfDoc.save();
     }
 
