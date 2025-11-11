@@ -363,10 +363,12 @@
         const { PDFDocument } = window.PDFLib;
         const pdfDoc = await PDFDocument.load(arrayBuffer);
         
-        // By setting restrictive permissions along with the password, we ensure
-        // that all PDF viewers will correctly prompt for the password on open.
+        // By setting both user and owner passwords along with restrictive permissions,
+        // we create a fully compliant, securely encrypted file that forces all
+        // standard PDF viewers to prompt for a password on open.
         const pdfBytes = await pdfDoc.save({
             userPassword: password,
+            ownerPassword: password, // This is crucial for compatibility
             permissions: {
                 printing: 'none',
                 modifying: false,
