@@ -1,17 +1,18 @@
 // -----------------------------------------------------------
-//  /api/lock  – PDF‑locking endpoint
+//  /api/lock  – PDF lock endpoint (no external keys needed)
 // -----------------------------------------------------------
 
-// Import pdf‑lib from a CDN – no npm install required
+// pdf‑lib is imported from a CDN – no npm install required
 import { PDFDocument } from 'https://cdn.skypack.dev/pdf-lib@1.20.0';
 
 /**
- * Main request handler.
- * Works for Vercel, Netlify, and Cloudflare Workers (the export at the bottom
- * adapts to each runtime).
+ * Main request handler – works for Vercel/Netlify (req,res) **and**
+ * for Cloudflare Workers (returns a Response).
  */
 async function handler(request) {
-  // We only accept POST
+  // ---------------------------------------------------------
+  //  1️⃣  Accept only POST
+  // ---------------------------------------------------------
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
       status: 405,
@@ -19,7 +20,9 @@ async function handler(request) {
     });
   }
 
-  // Parse multipart/form‑data
+  // ---------------------------------------------------------
+  //  2️⃣  Get multipart/form‑data (file + password)
+  // ---------------------------------------------------------
   const form = await request.formData();
   const file = form.get('file');
   const password = form.get('password');
@@ -31,14 +34,19 @@ async function handler(request) {
     );
   }
 
-  // Read the PDF bytes
+  // ---------------------------------------------------------
+  //  3️⃣  Read the PDF bytes
+  // ---------------------------------------------------------
   const arrayBuffer = await file.arrayBuffer();
 
+  // ---------------------------------------------------------
+  //  4️⃣  Encrypt the PDF (userPassword only → viewer must ask)
+  // ---------------------------------------------------------
   try {
-    // Load, encrypt and re‑save the PDF
     const pdfDoc = await PDFDocument.load(arrayBuffer);
     pdfDoc.encrypt({
-      userPassword: password,          // **only userPassword** → viewer must ask
+      userPassword: password,               // ← this forces the password prompt
+      // **NO ownerPassword** – otherwise many viewers skip the prompt
       permissions: {
         printing: 'notAllowed',
         modifying: false,
@@ -49,16 +57,19 @@ async function handler(request) {
         documentAssembly: false,
       },
     });
+
     const lockedBytes = await pdfDoc.save();
 
-    // Return the encrypted PDF as a download
+    // ---------------------------------------------------------
+    //  5️⃣  Return the locked PDF as a downloadable file
+    // ---------------------------------------------------------
     return new Response(lockedBytes, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        // Hint a filename – the front‑end will rename it again
-        'Content-Disposition': `attachment; filename="${file.name
-          .replace(/\.pdf$/i, '')}-locked.pdf"`,
+        // Hint a filename (the front‑end will rename again)
+        'Content-Disposition':
+          `attachment; filename="${file.name.replace(/\.pdf$/i, '')}-locked.pdf"`,
       },
     });
   } catch (e) {
@@ -76,10 +87,10 @@ async function handler(request) {
 /* -----------------------------------------------------------
    EXPORT FOR THE THREE MAIN RUNTIMES
    ----------------------------------------------------------- */
-// Vercel / Netlify (receive (req, res) arguments)
+// Vercel / Netlify (they give you (req, res) )
 export default async (req, res) => {
   const response = await handler(req);
-  // If the runtime passes a Node‑style `res` object, copy everything over
+  // If the runtime gave us a Node‑style `res`, copy everything over
   if (res && typeof res.setHeader === 'function') {
     response.headers.forEach((v, k) => res.setHeader(k, v));
     res.writeHead(response.status);
@@ -91,6 +102,5 @@ export default async (req, res) => {
   return response;
 };
 
-/* If you ever use a pure Workers project you could also export:
-export { handler as onRequest };
-*/
+// (If you ever use a pure Workers project, you could also do:
+// export { handler as onRequest };
