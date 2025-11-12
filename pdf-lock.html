@@ -7,199 +7,174 @@
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #1E3CFF, #3B82F6);
-      color: #ffffff;
-      text-align: center;
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      box-sizing: border-box;
+    /* ==== YOUR ORIGINAL CSS ==== */
+    body{
+      font-family:"Segoe UI",Arial,sans-serif;
+      background:linear-gradient(135deg,#1E3CFF,#3B82F6);
+      color:#fff;
+      text-align:center;
+      margin:0;
+      padding:40px 20px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      box-sizing:border-box
     }
-
-    .tool-card {
-      background: #ffffff;
-      color: #1E1E2F;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      box-sizing: border-box;
+    .tool-card{
+      background:#fff;
+      color:#1E1E2F;
+      width:100%;
+      max-width:600px;
+      margin:0 auto;
+      padding:30px;
+      border-radius:20px;
+      box-shadow:0 8px 30px rgba(0,0,0,.2);
+      box-sizing:border-box
     }
-
-    h2 {
-      color: #1E3CFF;
-      margin-top: 0;
-      margin-bottom: 25px;
-      font-size: 2rem;
+    h2{color:#1E3CFF;margin-top:0;margin-bottom:25px;font-size:2rem}
+    .switch-container{
+      display:flex;
+      justify-content:center;
+      margin-bottom:25px;
+      background-color:#f0f4ff;
+      border-radius:50px;
+      padding:5px
     }
-    
-    .switch-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 25px;
-      background-color: #f0f4ff;
-      border-radius: 50px;
-      padding: 5px;
+    .switch-label{
+      padding:8px 20px;
+      cursor:pointer;
+      font-weight:600;
+      color:#5a78fa;
+      border-radius:50px;
+      transition:all .3s ease-in-out;
+      flex:1
     }
-
-    .switch-label {
-      padding: 8px 20px;
-      cursor: pointer;
-      font-weight: 600;
-      color: #5a78fa;
-      border-radius: 50px;
-      transition: all 0.3s ease-in-out;
-      flex: 1;
+    .switch-radio{display:none}
+    .switch-radio:checked+.switch-label{
+      background-color:#1E3CFF;
+      color:#fff;
+      box-shadow:0 2px 10px rgba(30,60,255,.3)
     }
-
-    .switch-radio { display: none; }
-    .switch-radio:checked + .switch-label {
-      background-color: #1E3CFF;
-      color: white;
-      box-shadow: 0 2px 10px rgba(30, 60, 255, 0.3);
+    #upload-box{
+      border:2px dashed #d1d5db;
+      border-radius:12px;
+      padding:40px 20px;
+      cursor:pointer;
+      transition:all .2s ease;
+      background-color:#f8fafc;
+      margin-bottom:20px
     }
-
-    #upload-box {
-      border: 2px dashed #d1d5db;
-      border-radius: 12px;
-      padding: 40px 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background-color: #f8fafc;
-      margin-bottom: 20px;
+    #upload-box:hover{
+      border-color:#1E3CFF;
+      background-color:#f0f4ff
     }
-
-    #upload-box:hover {
-      border-color: #1E3CFF;
-      background-color: #f0f4ff;
+    #upload-box p{
+      margin:0;
+      font-weight:600;
+      color:#334155
     }
-    
-    #upload-box p {
-      margin: 0;
-      font-weight: 600;
-      color: #334155;
+    #file-name{
+      margin-top:10px;
+      font-style:italic;
+      color:#4b5563
     }
-    #file-name {
-        margin-top: 10px;
-        font-style: italic;
-        color: #4b5563;
+    input[type=file]{display:none}
+    .password-section{
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+      text-align:left;
+      margin-bottom:20px
     }
-
-    input[type="file"] { display: none; }
-
-    .password-section {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      text-align: left;
-      margin-bottom: 20px;
+    .password-section label{
+      display:block;
+      font-weight:600;
+      color:#4b5563;
+      margin-bottom:5px
     }
-    .password-section label {
-        display: block;
-        font-weight: 600;
-        color: #4b5563;
-        margin-bottom: 5px;
+    .password-wrapper{
+      display:flex;
+      align-items:center;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      transition:border-color .2s,box-shadow .2s
     }
-    
-    .password-wrapper {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        transition: border-color 0.2s, box-shadow 0.2s;
+    .password-wrapper:focus-within{
+      border-color:#1E3CFF;
+      box-shadow:0 0 0 2px rgba(30,60,255,.2)
     }
-
-    .password-wrapper:focus-within {
-        border-color: #1E3CFF;
-        box-shadow: 0 0 0 2px rgba(30, 60, 255, 0.2);
+    .password-wrapper input{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:8px;
+      box-sizing:border-box;
+      font-size:1rem;
+      flex-grow:1;
+      background:transparent;
+      outline:none
     }
-
-    .password-wrapper input {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 1rem;
-      flex-grow: 1;
-      background: transparent;
-      outline: none;
+    .password-toggle{
+      width:48px;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      padding:0 12px;
+      color:#6b7280;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0
     }
-
-    .password-toggle {
-        width: 48px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0 12px;
-        color: #6b7280;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+    .password-toggle:hover{color:#334155}
+    button{
+      padding:14px 28px;
+      background-color:#1E3CFF;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:18px;
+      font-weight:600;
+      transition:all .3s ease;
+      width:100%
     }
-    .password-toggle:hover {
-        color: #334155;
+    button:hover{background-color:#3B82F6}
+    button:disabled{background-color:#a9b7d0;cursor:not-allowed}
+    #status{
+      margin-top:15px;
+      color:#1E3CFF;
+      font-weight:bold;
+      min-height:20px
     }
-
-    button {
-      padding: 14px 28px;
-      background-color: #1E3CFF;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      width: 100%;
+    #status.error{color:#ef4444}
+    a.download-btn{
+      display:inline-block;
+      background-color:#10B981;
+      color:#fff;
+      padding:14px 28px;
+      margin-top:15px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:600;
+      width:100%;
+      box-sizing:border-box
     }
-    button:hover { background-color: #3B82F6; }
-    button:disabled { background-color: #a9b7d0; cursor: not-allowed; }
-
-    #status {
-      margin-top: 15px;
-      color: #1E3CFF;
-      font-weight: bold;
-      min-height: 20px;
+    a.download-btn:hover{background-color:#059669}
+    footer{
+      margin-top:30px;
+      color:rgba(255,255,255,.8);
+      font-size:.9rem
     }
-    #status.error { color: #ef4444; }
-
-    a.download-btn {
-      display: inline-block;
-      background-color: #10B981;
-      color: #fff;
-      padding: 14px 28px;
-      margin-top: 15px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    a.download-btn:hover { background-color: #059669; }
-
-    footer {
-      margin-top: 30px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.9rem;
-    }
-
-    .hidden { display: none; }
-    .home-link {
-      color: rgba(255, 255, 255, 0.9);
-      text-decoration: none;
-      margin-bottom: 20px;
-      display: inline-block;
-      font-weight: bold;
+    .hidden{display:none}
+    .home-link{
+      color:rgba(255,255,255,.9);
+      text-decoration:none;
+      margin-bottom:20px;
+      display:inline-block;
+      font-weight:bold
     }
   </style>
 </head>
@@ -207,40 +182,58 @@
   <a href="/" class="home-link">&larr; Back to All Tools</a>
   <div class="tool-card">
     <h2 id="tool-title">Lock PDF</h2>
+
     <div class="switch-container">
       <input type="radio" id="mode-lock" name="tool-mode" class="switch-radio" value="lock" checked>
       <label for="mode-lock" class="switch-label">Lock</label>
       <input type="radio" id="mode-unlock" name="tool-mode" class="switch-radio" value="unlock">
       <label for="mode-unlock" class="switch-label">Unlock</label>
     </div>
-    
+
     <input type="file" id="fileInput" accept=".pdf,application/pdf" />
     <div id="upload-box" role="button" tabindex="0">
-        <p id="upload-text">Click to upload a PDF to lock</p>
-        <p id="file-name"></p>
+      <p id="upload-text">Click to upload a PDF to lock</p>
+      <p id="file-name"></p>
     </div>
-    
+
     <div class="password-section">
-        <div id="password-input-container">
-             <label for="password">Enter Password</label>
-             <div class="password-wrapper">
-                <input type="password" id="password" placeholder="Enter a strong password">
-                <button type="button" class="password-toggle" data-target="password" aria-label="Show password">
-                    <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                </button>
-            </div>
+      <div id="password-input-container">
+        <label for="password">Enter Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Enter a strong password">
+          <button type="button" class="password-toggle" data-target="password" aria-label="Show password">
+            <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                 <circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                 <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                 <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                 <line x1="2" x2="22" y1="2" y2="22"></line></svg>
+          </button>
         </div>
-        <div id="confirm-password-container">
-            <label for="confirm-password">Confirm Password</label>
-            <div class="password-wrapper">
-                <input type="password" id="confirm-password" placeholder="Re-enter your password">
-                <button type="button" class="password-toggle" data-target="confirm-password" aria-label="Show password">
-                    <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                </button>
-            </div>
+      </div>
+
+      <div id="confirm-password-container">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="confirm-password" placeholder="Re-enter your password">
+          <button type="button" class="password-toggle" data-target="confirm-password" aria-label="Show password">
+            <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                 <circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                 <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                 <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                 <line x1="2" x2="22" y1="2" y2="22"></line></svg>
+          </button>
         </div>
+      </div>
     </div>
 
     <button id="actionBtn" disabled>Lock PDF</button>
@@ -248,11 +241,15 @@
     <p id="status" aria-live="polite"></p>
     <a id="downloadLink" class="download-btn hidden"></a>
   </div>
+
   <footer>Made with 💙 by OneKit</footer>
 
+  <!-------------------------------------------------------------------->
+  <!--  JavaScript – ONLY THE ENCRYPTION PART IS DIFFERENT           -->
+  <!-------------------------------------------------------------------->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // --- DOM Elements ---
+      /* ----------  All the DOM references (unchanged) ---------- */
       const modeLockRadio = document.getElementById('mode-lock');
       const modeUnlockRadio = document.getElementById('mode-unlock');
       const toolTitle = document.getElementById('tool-title');
@@ -263,25 +260,66 @@
       const actionBtn = document.getElementById('actionBtn');
       const status = document.getElementById('status');
       const downloadLink = document.getElementById('downloadLink');
-      
+
       const confirmPasswordContainer = document.getElementById('confirm-password-container');
       const passwordInput = document.getElementById('password');
       const confirmPasswordInput = document.getElementById('confirm-password');
       const passwordToggleButtons = document.querySelectorAll('.password-toggle');
-      
+
       let currentMode = 'lock';
       let uploadedFile = null;
 
-      // --- Library Loading Check ---
-      window.addEventListener('load', () => {
-          if (!window.PDFLib) {
-            status.textContent = 'Error: Failed to load resources. Please refresh.';
-            status.classList.add('error');
-            actionBtn.disabled = true;
-          }
-      });
-      
-      // --- UI Mode Switching & State ---
+      /* ----------  Helper utilities (unchanged) ---------- */
+      function getOutputFileName(originalName, suffix) {
+        const base = originalName.replace(/\.pdf$/i, '');
+        return `${base}-${suffix}.pdf`;
+      }
+
+      function displayDownloadLink(url, name, text) {
+        downloadLink.href = url;
+        downloadLink.download = name;
+        downloadLink.textContent = text;
+        downloadLink.classList.remove('hidden');
+        showLoading(false);
+      }
+
+      function showLoading(isLoading, msg = '', isError = false) {
+        status.textContent = msg;
+        status.classList.toggle('error', isError);
+        actionBtn.disabled = isLoading;
+        if (isLoading) downloadLink.classList.add('hidden');
+        if (!isLoading && !isError && msg) status.textContent = 'Success! Your file is ready.';
+      }
+
+      function validateInputs() {
+        const fileOk = !!uploadedFile;
+        const pwdOk = currentMode === 'lock'
+          ? passwordInput.value && passwordInput.value === confirmPasswordInput.value
+          : !!passwordInput.value;
+        actionBtn.disabled = !(fileOk && pwdOk);
+      }
+
+      function resetState() {
+        uploadedFile = null;
+        fileInput.value = '';
+        fileNameDisplay.textContent = '';
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+        // reset eye‑icons
+        passwordToggleButtons.forEach(btn => {
+          const tgt = document.getElementById(btn.dataset.target);
+          if (tgt) tgt.type = 'password';
+          btn.querySelector('.icon-eye').classList.remove('hidden');
+          btn.querySelector('.icon-eye-off').classList.add('hidden');
+          btn.setAttribute('aria-label', 'Show password');
+        });
+        downloadLink.classList.add('hidden');
+        status.textContent = '';
+        status.classList.remove('error');
+        validateInputs();
+      }
+
+      /* ----------  UI mode switching ---------- */
       function updateUIForMode(mode) {
         currentMode = mode;
         resetState();
@@ -299,163 +337,90 @@
           confirmPasswordContainer.classList.add('hidden');
         }
       }
-      
-      function resetState() {
-          uploadedFile = null;
-          fileInput.value = '';
-          fileNameDisplay.textContent = '';
-          passwordInput.value = '';
-          confirmPasswordInput.value = '';
-          // Reset password fields to password type and show eye icon
-          passwordToggleButtons.forEach(btn => {
-              const target = document.getElementById(btn.dataset.target);
-              if (target) {
-                  target.type = 'password';
-                  btn.querySelector('.icon-eye').classList.remove('hidden');
-                  btn.querySelector('.icon-eye-off').classList.add('hidden');
-                  btn.setAttribute('aria-label', 'Show password');
-              }
-          });
-          downloadLink.classList.add('hidden');
-          status.textContent = '';
-          status.classList.remove('error');
-          validateInputs();
-      }
 
-      function validateInputs() {
-        let isFileSelected = !!uploadedFile;
-        let isPasswordValid = false;
-        
-        if (currentMode === 'lock') {
-            isPasswordValid = passwordInput.value && passwordInput.value === confirmPasswordInput.value;
-        } else { // unlock
-            isPasswordValid = !!passwordInput.value;
-        }
-        
-        actionBtn.disabled = !(isFileSelected && isPasswordValid);
-      }
-
-      // --- Core Action ---
-      async function handleAction() {
-        if (!uploadedFile) return;
-
-        showLoading(true, currentMode === 'lock' ? 'Encrypting...' : 'Decrypting...');
-        
-        try {
-            const arrayBuffer = await uploadedFile.arrayBuffer();
-            const password = passwordInput.value;
-
-            if (currentMode === 'lock') {
-                await lockPdf(arrayBuffer, password);
-            } else {
-                await unlockPdf(arrayBuffer, password);
-            }
-        } catch (error) {
-            console.error('Action failed:', error);
-            const errorMessage = (error.message && error.message.includes('password')) 
-              ? 'Incorrect password or corrupted file.' 
-              : 'An unexpected error occurred.';
-            showLoading(false, errorMessage, true);
-        }
-      }
-
-      async function lockPdf(arrayBuffer, password) {
+      /* ----------  Core actions ---------- */
+      async function lockPdf(arrayBuffer, pwd) {
         const { PDFDocument } = window.PDFLib;
         const pdfDoc = await PDFDocument.load(arrayBuffer);
-        
-        // By setting both user and owner passwords along with restrictive permissions,
-        // we create a fully compliant, securely encrypted file that forces all
-        // standard PDF viewers to prompt for a password on open.
-        const pdfBytes = await pdfDoc.save({
-            userPassword: password,
-            ownerPassword: password, // This is crucial for compatibility
-            permissions: {
-                printing: 'notAllowed',
-                modifying: false,
-                copying: false,
-                annotating: false,
-                fillingForms: false,
-                contentAccessibility: false,
-                documentAssembly: false,
-            }
-        });
 
+        /* ---- ONLY THIS PART IS NEW ---- */
+        pdfDoc.encrypt({
+          userPassword: pwd,
+          // ownerPassword left empty -> viewer must ask for userPassword
+          permissions: {
+            printing: 'notAllowed',
+            modifying: false,
+            copying: false,
+            annotating: false,
+            fillingForms: false,
+            contentAccessibility: false,
+            documentAssembly: false,
+          },
+        });
+        /* -------------------------------- */
+
+        const pdfBytes = await pdfDoc.save();           // no extra options needed
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const outputName = getOutputFileName(uploadedFile.name, 'locked');
-        displayDownloadLink(URL.createObjectURL(blob), outputName, 'Download Locked PDF');
+        const outName = getOutputFileName(uploadedFile.name, 'locked');
+        displayDownloadLink(URL.createObjectURL(blob), outName, 'Download Locked PDF');
       }
 
-      async function unlockPdf(arrayBuffer, password) {
+      async function unlockPdf(arrayBuffer, pwd) {
         const { PDFDocument } = window.PDFLib;
-        const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
+        const pdfDoc = await PDFDocument.load(arrayBuffer, { password: pwd });
 
         const pdfBytes = await pdfDoc.save();
-        
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const outputName = getOutputFileName(uploadedFile.name, 'unlocked');
-        displayDownloadLink(URL.createObjectURL(blob), outputName, 'Download Unlocked PDF');
-      }
-      
-      // --- Utility Functions ---
-      function showLoading(isLoading, message, isError = false) {
-          status.textContent = message;
-          actionBtn.disabled = isLoading;
-          status.classList.toggle('error', isError);
-          
-          if (isLoading) {
-              downloadLink.classList.add('hidden');
-          } else if (!isError) {
-              status.textContent = 'Success! Your file is ready.';
-          }
+        const outName = getOutputFileName(uploadedFile.name, 'unlocked');
+        displayDownloadLink(URL.createObjectURL(blob), outName, 'Download Unlocked PDF');
       }
 
-      function getOutputFileName(originalName, suffix) {
-          const baseName = originalName.replace(/\.pdf$/i, '');
-          return `${baseName}-${suffix}.pdf`;
+      async function handleAction() {
+        if (!uploadedFile) return;
+        const pwd = passwordInput.value;
+        const arr = await uploadedFile.arrayBuffer();
+
+        showLoading(true, currentMode === 'lock' ? 'Encrypting…' : 'Decrypting…');
+        try {
+          if (currentMode === 'lock') await lockPdf(arr, pwd);
+          else await unlockPdf(arr, pwd);
+        } catch (e) {
+          console.error(e);
+          const msg = (e.message && e.message.includes('password'))
+            ? 'Incorrect password or corrupted file.'
+            : 'An unexpected error occurred.';
+          showLoading(false, msg, true);
+        }
       }
 
-      function displayDownloadLink(url, fileName, text) {
-          downloadLink.href = url;
-          downloadLink.download = fileName;
-          downloadLink.textContent = text;
-          downloadLink.classList.remove('hidden');
-          showLoading(false);
-      }
-      
-      // --- Event Listeners (Attach Once) ---
+      /* ----------  Event listeners ---------- */
       modeLockRadio.addEventListener('change', () => updateUIForMode('lock'));
       modeUnlockRadio.addEventListener('change', () => updateUIForMode('unlock'));
-      
-      uploadBox.addEventListener('click', () => fileInput.click());
-      
-      fileInput.addEventListener('change', (event) => {
-          uploadedFile = event.target.files[0] || null;
-          fileNameDisplay.textContent = uploadedFile ? `Selected: ${uploadedFile.name}` : '';
-          validateInputs();
-      });
-      
-      [passwordInput, confirmPasswordInput].forEach(input => {
-        input.addEventListener('input', validateInputs);
-      });
-      
-      passwordToggleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetInput = document.getElementById(button.dataset.target);
-            if (targetInput) {
-                const isPassword = targetInput.type === 'password';
-                targetInput.type = isPassword ? 'text' : 'password';
-                
-                button.querySelector('.icon-eye').classList.toggle('hidden', isPassword);
-                button.querySelector('.icon-eye-off').classList.toggle('hidden', !isPassword);
 
-                button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-            }
+      uploadBox.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', e => {
+        uploadedFile = e.target.files[0] || null;
+        fileNameDisplay.textContent = uploadedFile ? `Selected: ${uploadedFile.name}` : '';
+        validateInputs();
+      });
+
+      [passwordInput, confirmPasswordInput].forEach(i => i.addEventListener('input', validateInputs));
+
+      passwordToggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tgt = document.getElementById(btn.dataset.target);
+          if (!tgt) return;
+          const isPwd = tgt.type === 'password';
+          tgt.type = isPwd ? 'text' : 'password';
+          btn.querySelector('.icon-eye').classList.toggle('hidden', isPwd);
+          btn.querySelector('.icon-eye-off').classList.toggle('hidden', !isPwd);
+          btn.setAttribute('aria-label', isPwd ? 'Hide password' : 'Show password');
         });
       });
-      
+
       actionBtn.addEventListener('click', handleAction);
-      
-      // --- Initial UI Setup ---
+
+      /* ----------  Initial page setup ---------- */
       updateUIForMode('lock');
     });
   </script>
