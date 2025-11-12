@@ -1,15 +1,17 @@
 // -----------------------------------------------------------
-//  /api/lock  – server‑less PDF lock endpoint
+//  /api/lock  – PDF‑locking endpoint
 // -----------------------------------------------------------
-// Import pdf‑lib from a CDN – no npm install needed
+
+// Import pdf‑lib from a CDN – no npm install required
 import { PDFDocument } from 'https://cdn.skypack.dev/pdf-lib@1.20.0';
 
 /**
- * Main handler – works for Vercel/Netlify (req,res) **and**
- * for Cloudflare Workers (returns a Response).
+ * Main request handler.
+ * Works for Vercel, Netlify, and Cloudflare Workers (the export at the bottom
+ * adapts to each runtime).
  */
 async function handler(request) {
-  // Only POST is allowed
+  // We only accept POST
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
       status: 405,
@@ -17,7 +19,7 @@ async function handler(request) {
     });
   }
 
-  // Retrieve multipart/form‑data fields
+  // Parse multipart/form‑data
   const form = await request.formData();
   const file = form.get('file');
   const password = form.get('password');
@@ -25,21 +27,18 @@ async function handler(request) {
   if (!file || typeof password !== 'string') {
     return new Response(
       JSON.stringify({ message: 'Missing file or password' }),
-      {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      }
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
-  // Read PDF bytes
+  // Read the PDF bytes
   const arrayBuffer = await file.arrayBuffer();
 
   try {
+    // Load, encrypt and re‑save the PDF
     const pdfDoc = await PDFDocument.load(arrayBuffer);
-    // **Encrypt** – userPassword only (ownerPassword omitted)
     pdfDoc.encrypt({
-      userPassword: password,
+      userPassword: password,          // **only userPassword** → viewer must ask
       permissions: {
         printing: 'notAllowed',
         modifying: false,
@@ -50,10 +49,9 @@ async function handler(request) {
         documentAssembly: false,
       },
     });
-
     const lockedBytes = await pdfDoc.save();
 
-    // Return the encrypted PDF as a file download
+    // Return the encrypted PDF as a download
     return new Response(lockedBytes, {
       status: 200,
       headers: {
@@ -64,9 +62,9 @@ async function handler(request) {
       },
     });
   } catch (e) {
-    console.error('PDF lock error:', e);
+    console.error('PDF lock error →', e);
     const msg = e.message?.includes('password')
-      ? 'The uploaded PDF is already password-protected.'
+      ? 'The uploaded PDF is already password‑protected.'
       : 'Failed to lock PDF (maybe the file is corrupted).';
     return new Response(JSON.stringify({ message: msg }), {
       status: 500,
@@ -78,10 +76,10 @@ async function handler(request) {
 /* -----------------------------------------------------------
    EXPORT FOR THE THREE MAIN RUNTIMES
    ----------------------------------------------------------- */
-// Vercel / Netlify (they give you (req, res) )
+// Vercel / Netlify (receive (req, res) arguments)
 export default async (req, res) => {
   const response = await handler(req);
-  // If the runtime gave us a Node‑style `res` object, copy everything in.
+  // If the runtime passes a Node‑style `res` object, copy everything over
   if (res && typeof res.setHeader === 'function') {
     response.headers.forEach((v, k) => res.setHeader(k, v));
     res.writeHead(response.status);
@@ -93,6 +91,6 @@ export default async (req, res) => {
   return response;
 };
 
-/* For pure Workers you could also export:
-// export { handler as onRequest };
+/* If you ever use a pure Workers project you could also export:
+export { handler as onRequest };
 */
