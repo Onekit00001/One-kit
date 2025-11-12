@@ -1,119 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDF Lock & Unlock - OneKit</title>
-
-  <!-- pdf‑lib is still needed for the **Unlock** flow (client‑side) -->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PDF Lock & Unlock – OneKit</title>
   <script src="https://unpkg.com/pdf-lib@1.20.0/dist/pdf-lib.min.js"></script>
-
   <style>
-    /* -------------------------------------------------------
-       YOUR ORIGINAL CSS – UNCHANGED
-       ------------------------------------------------------- */
-    body{
-      font-family:"Segoe UI",Arial,sans-serif;
-      background:linear-gradient(135deg,#1E3CFF,#3B82F6);
-      color:#fff;
-      text-align:center;
-      margin:0;padding:40px 20px;
-      display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      min-height:100vh;box-sizing:border-box;
-    }
-    .tool-card{
-      background:#fff;color:#1E1E2F;
-      width:100%;max-width:600px;margin:0 auto;
-      padding:30px;border-radius:20px;
-      box-shadow:0 8px 30px rgba(0,0,0,.2);
-      box-sizing:border-box;
-    }
+    /* --------- YOUR ORIGINAL CSS (unchanged) --------- */
+    body{font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#1E3CFF,#3B82F6);color:#fff;text-align:center;margin:0;padding:40px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;box-sizing:border-box}
+    .tool-card{background:#fff;color:#1E1E2F;width:100%;max-width:600px;margin:0 auto;padding:30px;border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,.2);box-sizing:border-box}
     h2{color:#1E3CFF;margin-top:0;margin-bottom:25px;font-size:2rem}
-    .switch-container{
-      display:flex;justify-content:center;margin-bottom:25px;
-      background-color:#f0f4ff;border-radius:50px;padding:5px;
-    }
-    .switch-label{
-      padding:8px 20px;cursor:pointer;font-weight:600;
-      color:#5a78fa;border-radius:50px;
-      transition:all .3s ease-in-out;flex:1;
-    }
+    .switch-container{display:flex;justify-content:center;margin-bottom:25px;background:#f0f4ff;border-radius:50px;padding:5px}
+    .switch-label{padding:8px 20px;cursor:pointer;font-weight:600;color:#5a78fa;border-radius:50px;transition:all .3s ease-in-out;flex:1}
     .switch-radio{display:none}
-    .switch-radio:checked+.switch-label{
-      background-color:#1E3CFF;color:#fff;
-      box-shadow:0 2px 10px rgba(30,60,255,.3);
-    }
-    #upload-box{
-      border:2px dashed #d1d5db;border-radius:12px;
-      padding:40px 20px;cursor:pointer;
-      transition:all .2s ease;background:#f8fafc;margin-bottom:20px;
-    }
-    #upload-box:hover{
-      border-color:#1E3CFF;background:#f0f4ff;
-    }
+    .switch-radio:checked+.switch-label{background:#1E3CFF;color:#fff;box-shadow:0 2px 10px rgba(30,60,255,.3)}
+    #upload-box{border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;cursor:pointer;transition:all .2s ease;background:#f8fafc;margin-bottom:20px}
+    #upload-box:hover{border-color:#1E3CFF;background:#f0f4ff}
     #upload-box p{margin:0;font-weight:600;color:#334155}
     #file-name{margin-top:10px;font-style:italic;color:#4b5563}
     input[type=file]{display:none}
-    .password-section{
-      display:flex;flex-direction:column;gap:15px;
-      text-align:left;margin-bottom:20px
-    }
-    .password-section label{
-      display:block;font-weight:600;color:#4b5563;margin-bottom:5px
-    }
-    .password-wrapper{
-      display:flex;align-items:center;
-      border:1px solid #d1d5db;border-radius:8px;
-      transition:border-color .2s,box-shadow .2s;
-    }
-    .password-wrapper:focus-within{
-      border-color:#1E3CFF;
-      box-shadow:0 0 0 2px rgba(30,60,255,.2);
-    }
-    .password-wrapper input{
-      width:100%;padding:12px;border:none;
-      border-radius:8px;box-sizing:border-box;
-      font-size:1rem;flex-grow:1;
-      background:transparent;outline:none;
-    }
-    .password-toggle{
-      width:48px;background:transparent;border:none;
-      cursor:pointer;padding:0 12px;color:#6b7280;
-      display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;
-    }
+    .password-section{display:flex;flex-direction:column;gap:15px;text-align:left;margin-bottom:20px}
+    .password-section label{display:block;font-weight:600;color:#4b5563;margin-bottom:5px}
+    .password-wrapper{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:8px;transition:border-color .2s,box-shadow .2s}
+    .password-wrapper:focus-within{border-color:#1E3CFF;box-shadow:0 0 0 2px rgba(30,60,255,.2)}
+    .password-wrapper input{width:100%;padding:12px;border:none;border-radius:8px;box-sizing:border-box;font-size:1rem;flex-grow:1;background:transparent;outline:none}
+    .password-toggle{width:48px;background:transparent;border:none;cursor:pointer;padding:0 12px;color:#6b7280;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .password-toggle:hover{color:#334155}
-    button{
-      padding:14px 28px;background:#1E3CFF;color:#fff;
-      border:none;border-radius:10px;cursor:pointer;
-      font-size:18px;font-weight:600;
-      transition:all .3s ease;width:100%;
-    }
+    button{padding:14px 28px;background:#1E3CFF;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:18px;font-weight:600;transition:all .3s ease;width:100%}
     button:hover{background:#3B82F6}
     button:disabled{background:#a9b7d0;cursor:not-allowed}
-    #status{
-      margin-top:15px;color:#1E3CFF;font-weight:bold;
-      min-height:20px;
-    }
+    #status{margin-top:15px;color:#1E3CFF;font-weight:bold;min-height:20px}
     #status.error{color:#ef4444}
-    a.download-btn{
-      display:inline-block;background:#10B981;color:#fff;
-      padding:14px 28px;margin-top:15px;
-      border-radius:10px;text-decoration:none;
-      font-weight:600;width:100%;box-sizing:border-box;
-    }
+    a.download-btn{display:inline-block;background:#10B981;color:#fff;padding:14px 28px;margin-top:15px;border-radius:10px;text-decoration:none;font-weight:600;width:100%;box-sizing:border-box}
     a.download-btn:hover{background:#059669}
-    footer{
-      margin-top:30px;color:rgba(255,255,255,.8);
-      font-size:.9rem;
-    }
+    footer{margin-top:30px;color:rgba(255,255,255,.8);font-size:.9rem}
     .hidden{display:none}
-    .home-link{
-      color:rgba(255,255,255,.9);
-      text-decoration:none;margin-bottom:20px;
-      display:inline-block;font-weight:bold;
-    }
+    .home-link{color:rgba(255,255,255,.9);text-decoration:none;margin-bottom:20px;display:inline-block;font-weight:bold}
   </style>
 </head>
 <body>
@@ -122,13 +44,13 @@
     <h2 id="tool-title">Lock PDF</h2>
 
     <div class="switch-container">
-      <input type="radio" id="mode-lock" name="tool-mode" class="switch-radio" value="lock" checked>
-      <label for="mode-lock" class="switch-label">Lock</label>
+      <input type="radio" id="mode-lock"   name="tool-mode" class="switch-radio" value="lock"   checked>
+      <label for="mode-lock"   class="switch-label">Lock</label>
       <input type="radio" id="mode-unlock" name="tool-mode" class="switch-radio" value="unlock">
       <label for="mode-unlock" class="switch-label">Unlock</label>
     </div>
 
-    <input type="file" id="fileInput" accept=".pdf,application/pdf" />
+    <input type="file" id="fileInput" accept=".pdf,application/pdf"/>
     <div id="upload-box" role="button" tabindex="0">
       <p id="upload-text">Click to upload a PDF to lock</p>
       <p id="file-name"></p>
@@ -141,11 +63,11 @@
           <input type="password" id="password" placeholder="Enter a strong password">
           <button type="button" class="password-toggle" data-target="password" aria-label="Show password">
             <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
           </button>
         </div>
       </div>
@@ -156,11 +78,11 @@
           <input type="password" id="confirm-password" placeholder="Re-enter your password">
           <button type="button" class="password-toggle" data-target="confirm-password" aria-label="Show password">
             <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <svg class="icon-eye-off hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
           </button>
         </div>
       </div>
@@ -176,9 +98,10 @@
 
   <script>
     // -----------------------------------------------------------
-    //  EVERYTHING YOU HAD BEFORE – ONLY THE LOCK CALL CHANGES
+    //  EVERYTHING YOU HAD BEFORE – ONLY THE CALL TO LOCK CHANGED
     // -----------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
+      // ---- DOM refs ------------------------------------------------
       const modeLockRadio      = document.getElementById('mode-lock');
       const modeUnlockRadio    = document.getElementById('mode-unlock');
       const toolTitle          = document.getElementById('tool-title');
@@ -198,7 +121,7 @@
       let currentMode = 'lock';
       let uploadedFile = null;
 
-      // ------------ helpers (unchanged) ------------
+      // ---- helpers -------------------------------------------------
       function getOutputFileName(name, suffix){
         return name.replace(/\.pdf$/i,'') + '-' + suffix + '.pdf';
       }
@@ -260,28 +183,41 @@
         }
       }
 
-      // ------------------- NEW: CALL SERVER API -------------------
+      // ---- NEW: CALL SERVER‑LESS ENDPOINT -------------------------
       async function lockPdfServerSide(file, password){
         const form = new FormData();
         form.append('file', file);
         form.append('password', password);
 
-        const resp = await fetch('/api/lock', { // <-- this URL points to the server‑less function
+        // **NOTE**: on Vercel/Netlify the endpoint is exactly "/api/lock"
+        // If you run the site on a different domain, keep the path relative.
+        const resp = await fetch('/api/lock', {
           method: 'POST',
           body: form
         });
 
+        // ------------ Debug helper ---------------------------------
         if (!resp.ok){
-          const err = await resp.json().catch(()=>({message:'Unknown error'}));
-          throw new Error(err.message || 'Failed to lock PDF');
+          // print full details to the console so you can see why it failed
+          console.error('Lock endpoint error → status:', resp.status, resp.statusText);
+          const text = await resp.text();
+          console.error('Response body:', text);
+          // Throw a friendly error that will be shown to the user
+          let message = 'Failed to lock PDF.';
+          try {
+            const json = JSON.parse(text);
+            if (json.message) message = json.message;
+          } catch (_) {}
+          throw new Error(message);
         }
+        // -----------------------------------------------------------
 
         const blob = await resp.blob();
         const outName = getOutputFileName(file.name, 'locked');
         displayDownloadLink(URL.createObjectURL(blob), outName, 'Download Locked PDF');
       }
 
-      // ------------------- UNLOCK (unchanged) -------------------
+      // ---- Unlock stays client‑side (no change) -------------------
       async function unlockPdf(arrayBuffer, pwd){
         const { PDFDocument } = window.PDFLib;
         const pdfDoc = await PDFDocument.load(arrayBuffer, { password: pwd });
@@ -291,29 +227,28 @@
         displayDownloadLink(URL.createObjectURL(blob), outName, 'Download Unlocked PDF');
       }
 
-      // ------------------- MAIN BUTTON -------------------
+      // ---- Main button ------------------------------------------------
       async function handleAction(){
         if (!uploadedFile) return;
         const pwd = passwordInput.value;
-
         showLoading(true, currentMode === 'lock' ? 'Locking…' : 'Unlocking…');
         try{
           if (currentMode === 'lock'){
-            await lockPdfServerSide(uploadedFile, pwd);   // <-- NEW CALL
+            await lockPdfServerSide(uploadedFile, pwd);
           }else{
             const buf = await uploadedFile.arrayBuffer();
             await unlockPdf(buf, pwd);
           }
         }catch(e){
-          console.error(e);
+          console.error('Action error →', e);
           const friendly = e.message.includes('password')
-            ? e.message
-            : 'An unexpected error occurred.';
+                ? e.message
+                : 'An unexpected error occurred.';
           showLoading(false, friendly, true);
         }
       }
 
-      // ------------------- UI wiring (unchanged) -------------------
+      // ---- UI wiring ----------------------------------------------------
       modeLockRadio.addEventListener('change',()=>updateUIForMode('lock'));
       modeUnlockRadio.addEventListener('change',()=>updateUIForMode('unlock'));
 
@@ -341,7 +276,7 @@
 
       actionBtn.addEventListener('click',handleAction);
 
-      // ------------------- initialisation -------------------
+      // ---- initialisation ------------------------------------------------
       if(!window.PDFLib){
         status.textContent='Error: pdf‑lib failed to load. Refresh the page.';
         status.classList.add('error');
